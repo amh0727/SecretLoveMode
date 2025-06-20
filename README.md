@@ -1,6 +1,3 @@
-
------
-
 # 💖 Secret Love Mode 💖
 
 **Your Choices Shape the Story\! A Tale of Forbidden Love with an Interactive AI.**

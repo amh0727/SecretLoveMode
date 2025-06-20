@@ -1,5 +1,5 @@
 // GameActivity.kt
-package com.SecretLoveMode
+package com.secretlovemode
 
 import android.content.Intent
 import android.graphics.Typeface

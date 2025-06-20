@@ -1,4 +1,4 @@
-package com.SecretLoveMode
+package com.secretlovemode
 
 import android.content.Context
 import android.graphics.Paint

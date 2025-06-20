@@ -1,4 +1,4 @@
-package com.SecretLoveMode
+package com.secretlovemode
 
 import android.app.Application
 import android.util.Log

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "M1gp"
+rootProject.name = "secretlovemode"
 include(":app")
  

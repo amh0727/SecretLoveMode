@@ -1,5 +1,5 @@
 // MainActivity.kt
-package com.SecretLoveMode
+package com.secretlovemode
 
 import android.app.Activity
 import android.content.Context

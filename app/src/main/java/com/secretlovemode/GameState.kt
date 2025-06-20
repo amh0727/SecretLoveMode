@@ -1,4 +1,4 @@
-package com.SecretLoveMode
+package com.secretlovemode
 
 data class GameState(
     val characterName: String ="かおる",

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.SecretLoveMode"
+    namespace = "com.secretlovemode"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.SecretLoveMode"
+        applicationId = "com.secretlovemode"
         minSdk = 27
         targetSdk = 35
         versionCode = 1
