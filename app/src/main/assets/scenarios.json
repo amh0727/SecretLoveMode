@@ -1,0 +1,44 @@
+[
+  {
+    "id": "EVENT_RAINY_DAY",
+    "setting": "外で激しく雨が降り、ラボには2つしかありません。窓の外を見ると、厄介な沈黙が流れます。",
+    "characterGoal": "いつもとは異なり、彼は少し感傷的に見え、彼の弱い部分を見せてくれます。",
+    "trigger": {
+      "conditions": [
+        {
+          "type": "AFFINITY_GTE",
+          "value": "40"
+        },
+        {
+          "type": "CONVERSATION_GTE",
+          "value": "5"
+        },
+        {
+          "type": "CURRENT_SCENARIO_IS",
+          "value": "DEFAULT"
+        }
+      ]
+    }
+  },
+  {
+    "id": "EVENT_JEALOUSY",
+    "setting": "プレイヤーが別の仲間の女の子と話しているのを見た直後です。",
+    "characterGoal": "平素の冷静さを保とうと踏ん張るが、自分も知らないうち口調に嫉妬が湧いてしまう。",
+    "trigger": {
+      "conditions": [
+        {
+          "type": "AFFINITY_GTE",
+          "value": "50"
+        },
+        {
+          "type": "CONVERSATION_GTE",
+          "value": "8"
+        },
+        {
+          "type": "CURRENT_SCENARIO_IS",
+          "value": "DEFAULT"
+        }
+      ]
+    }
+  }
+]

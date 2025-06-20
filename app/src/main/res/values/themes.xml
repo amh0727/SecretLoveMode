@@ -1,0 +1,26 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 라이트 테마 (강제 적용) -->
+    <style name="Base.Theme.M1gp" parent="Theme.Material3.Light.NoActionBar">
+        <!-- 강제 색상 오버라이드 -->
+        <item name="colorPrimary">@color/button_primary</item>
+        <item name="colorSecondary">@color/button_secondary</item>
+        <item name="colorTertiary">@color/accent_pink</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="backgroundColor">@color/background_light</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+
+        <!-- 강제 윈도우 배경색 -->
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="android:statusBarColor">@color/primary_pink</item>
+        <item name="android:navigationBarColor">@color/background_light</item>
+
+        <!-- 시스템 UI 색상 강제 -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <style name="Theme.M1gp" parent="Base.Theme.M1gp"/>
+</resources>

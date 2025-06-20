@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 다크모드용 색상 -->
+
+    <!-- 기본 색상 -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 게임 테마 색상 (다크모드) -->
+    <color name="primary_pink">#FF2A2D3A</color>
+    <color name="accent_pink">#FF4A4E69</color>
+    <color name="button_primary">#FF6B73FF</color>
+    <color name="button_secondary">#FF9C88FF</color>
+    <color name="button_pressed">#FF4A50E2</color>
+
+    <!-- 상태 표시 색상 (다크모드에서도 잘 보이게) -->
+    <color name="affinity_color">#FFFF8A8A</color>
+    <color name="drunkenness_color">#FF7DEDE6</color>
+
+    <!-- 텍스트 색상 (다크모드) -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#FFCCCCCC</color>
+    <color name="text_accent">#FFBB86FC</color>
+
+
+    <!-- 배경 색상 (다크모드) -->
+    <color name="background_light">#FF1A1A1A</color>
+    <color name="card_background">#FF2D2D2D</color>
+    <color name="conversation_background">#FF252525</color>
+</resources>

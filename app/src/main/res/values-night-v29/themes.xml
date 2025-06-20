@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.M1gp" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:forceDarkAllowed">false</item>
+
+        <!-- 다크모드 색상 오버라이드 -->
+        <item name="colorPrimary">@color/button_primary</item>
+        <item name="colorSecondary">@color/button_secondary</item>
+        <item name="colorTertiary">@color/accent_pink</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="backgroundColor">@color/background_light</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+
+        <!-- 다크모드 윈도우 배경색 -->
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="android:statusBarColor">@color/primary_pink</item>
+        <item name="android:navigationBarColor">@color/background_light</item>
+
+        <!-- 다크모드 시스템 UI -->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

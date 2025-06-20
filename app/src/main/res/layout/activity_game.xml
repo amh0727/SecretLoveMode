@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:background="@color/background_light"
+                                                   tools:context=".GameActivity">
+
+    <!-- 캐릭터 이름 -->
+    <TextView
+            android:id="@+id/tvCharacterName"
+            style="@style/GameTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="キャラクター名"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 상태 표시 카드 -->
+    <LinearLayout
+            android:id="@+id/statusCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/status_card_background"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCharacterName">
+
+        <TextView
+                android:id="@+id/tvAffinity"
+                style="@style/StatusText.Affinity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="好感度: 50" />
+
+        <View
+                android:layout_width="1dp"
+                android:layout_height="30dp"
+                android:background="@color/accent_pink" />
+
+        <TextView
+                android:id="@+id/tvDrunkenness"
+                style="@style/StatusText.Drunkenness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="酔い具合: 0" />
+    </LinearLayout>
+
+    <!-- 캐릭터 이미지 -->
+    <androidx.cardview.widget.CardView
+            android:id="@+id/characterCard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/statusCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/conversationCard"
+            app:layout_constraintHeight_percent="0.25">  <!-- 이 값을 0.3 또는 0.25 등으로 줄여보세요 -->
+
+        <ImageView
+                android:id="@+id/ivCharacter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/character_image_pre"
+                android:background="@color/conversation_background"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 대화 카드 -->
+
+    <!-- 선택지 컨테이너 (동적 크기) -->
+    <androidx.cardview.widget.CardView
+            android:id="@+id/conversationCard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/choiceContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/characterCard"
+            app:layout_constraintHeight_percent="0.19">
+
+            <ScrollView
+                    android:id="@+id/scrollViewConversation"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/conversation_background"
+                    android:padding="2dp">
+
+    <TextView
+            android:id="@+id/tvConversation"
+            style="@style/ConversationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/conversation_background"
+            android:padding="10dp"
+            android:text="会話が始まります...\n\n"/>
+
+</ScrollView>
+        </androidx.cardview.widget.CardView>
+    <LinearLayout
+            android:id="@+id/choiceContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="4dp"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.0">
+
+        <Button
+                android:id="@+id/questionButton1"
+                style="@style/ChoiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="選択肢 1"/>
+
+        <Button
+                android:id="@+id/questionButton2"
+                style="@style/ChoiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="選択肢 2"/>
+
+        <Button
+                android:id="@+id/questionButton3"
+                style="@style/ChoiceButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:text="選択肢 3"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

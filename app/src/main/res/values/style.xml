@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 게임 타이틀 스타일 -->
+    <style name="GameTitleText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_accent</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- 상태 표시 스타일 -->
+    <style name="StatusText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- 호감도 스타일 -->
+    <style name="StatusText.Affinity">
+        <item name="android:textColor">@color/affinity_color</item>
+    </style>
+
+    <!-- 취기 스타일 -->
+    <style name="StatusText.Drunkenness">
+        <item name="android:textColor">@color/drunkenness_color</item>
+    </style>
+
+    <!-- 대화 텍스트 스타일 -->
+    <style name="ConversationText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- 선택지 버튼 스타일 -->
+    <style name="ChoiceButton">
+        <item name="android:background">@drawable/button_style</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+    </style>
+</resources>
