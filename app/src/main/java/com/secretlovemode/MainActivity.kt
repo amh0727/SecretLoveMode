@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedModelPath: String? = null
 
     // ViewModel 인스턴스
-    private lateinit var llmViewModel: LlmViewModel
+    private lateinit var SlmViewModel: SlmViewModel
 
     companion object {
         const val PREFS_NAME = "GamePrefs"
@@ -60,14 +60,14 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MainActivity", "File selected and cached: $cachedPath")
 
                         // 파일 선택 후 바로 모델 로딩 시작 (ViewModel에 요청)
-                        llmViewModel.loadModel(cachedPath)
+                        SlmViewModel.loadModel(cachedPath)
 
                     } else {
                         Toast.makeText(this, "ファイルのコピーに失敗しました。", Toast.LENGTH_SHORT).show()
                         tvSelectedModelFile.text = "選択されていません"
                         selectedModelPath = null
                         // 파일 복사 실패 시 ViewModel 상태 초기화 (필요하다면)
-                        // llmViewModel.resetState() // 이런 함수를 ViewModel에 추가할 수 있음
+                        // SlmViewModel.resetState() // 이런 함수를 ViewModel에 추가할 수 있음
                     }
                 } catch (e: SecurityException) {
                     Log.e("MainActivity", "Permission error for URI: $uri", e)
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        llmViewModel = (application as MyApplication).llmViewModel
+        SlmViewModel = (application as MyApplication).SlmViewModel
 
         btnSelectModelFile = findViewById(R.id.btnSelectModelFile)
         tvSelectedModelFile = findViewById(R.id.tvSelectedModelFile)
@@ -102,18 +102,18 @@ class MainActivity : AppCompatActivity() {
         loadLastSelectedModelInfo()
 
         // ViewModel 상태 관찰
-        llmViewModel.isModelLoading.observe(this) { isLoading ->
+        SlmViewModel.isModelLoading.observe(this) { isLoading ->
             showLoadingUI(isLoading)
         }
 
-        llmViewModel.isModelReady.observe(this) { isReady ->
+        SlmViewModel.isModelReady.observe(this) { isReady ->
             // 모델 준비 상태에 따라 게임 시작 버튼 활성화/비활성화
             btnStartGame.isEnabled = isReady && selectedModelPath != null // 모델 준비 + 경로 유효 시 활성화
             // 선택 해제 버튼 상태 업데이트 (모델 경로가 있고 로딩 중이 아닐 때 활성화)
             updateClearButtonState()
         }
 
-        llmViewModel.loadingError.observe(this) { errorMessage ->
+        SlmViewModel.loadingError.observe(this) { errorMessage ->
             if (errorMessage != null) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
                 // 오류 발생 시 UI 상태 초기화 (선택 해제 상태로)
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         // loadLastSelectedModelInfo()에서 selectedModelPath가 설정된 후에 호출
         selectedModelPath?.let { path ->
             if (File(path).exists()) {
-                llmViewModel.loadModel(path)
+                SlmViewModel.loadModel(path)
             } else {
                 // 파일이 존재하지 않으면 저장된 정보 삭제
                 clearSelectedModelInfoOnly()
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
         btnSelectModelFile.setOnClickListener {
             // 로딩 중이 아닐 때만 파일 선택 가능
-            if (llmViewModel.isModelLoading.value != true) {
+            if (SlmViewModel.isModelLoading.value != true) {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "*/*" // 모든 파일 타입 허용
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         btnStartGame.setOnClickListener {
             // 게임 시작 버튼은 ViewModel의 isModelReady 관찰로 활성화/비활성화됨
             // 클릭 시 GameActivity로 이동
-            if (llmViewModel.isModelReady.value == true && selectedModelPath != null) {
+            if (SlmViewModel.isModelReady.value == true && selectedModelPath != null) {
                 // 로딩 UI는 ViewModel 관찰로 표시됨
                 val intent = Intent(this, GameActivity::class.java)
                 // GameActivity에는 모델 경로를 전달할 필요 없음. GameActivity가 ViewModel에서 가져갈 것임.
@@ -268,9 +268,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // ViewModel 상태 초기화 및 CharacterAi 인스턴스 해제
-        llmViewModel.getCharacterAi()?.close() // ViewModel이 가진 CharacterAi 인스턴스 해제
+        (application as MyApplication).SlmViewModel.getCharacterAi()?.close()
         // ViewModel 내부 상태 초기화는 ViewModel에서 직접 관리하도록 할 수 있음.
-        // 예: llmViewModel.resetState()
+        // 예: SlmViewModel.resetState()
 
         clearSelectedModelInfoOnly() // UI 및 SharedPreferences 정보만 초기화
         Toast.makeText(this, "選択が解除されました。", Toast.LENGTH_SHORT).show()
@@ -286,7 +286,7 @@ class MainActivity : AppCompatActivity() {
             .apply()
         tvSelectedModelFile.text = "選択されていません"
         // ViewModel 상태 초기화는 clearSelectedModel 또는 ViewModel 내부 로직에서 처리
-        // llmViewModel.resetState() // 이런 함수를 ViewModel에 추가하여 호출 가능
+        // SlmViewModel.resetState() // 이런 함수를 ViewModel에 추가하여 호출 가능
     }
 
 
@@ -295,7 +295,7 @@ class MainActivity : AppCompatActivity() {
         val previousPath = sharedPreferences.getString(KEY_SELECTED_MODEL_PATH, null)
         // 현재 선택하려는 파일과 다르고, ViewModel에 로드된 모델 경로와도 다른 경우에만 삭제
         // ViewModel에 로드된 모델은 clearSelectedModel() 또는 ViewModel.loadModel()에서 close() 처리됨
-        if (previousPath != null && previousPath != selectedModelPath && previousPath != llmViewModel.loadedModelPath.value) {
+        if (previousPath != null && previousPath != selectedModelPath && previousPath != SlmViewModel.loadedModelPath.value) {
             val fileToDelete = File(previousPath)
             if (fileToDelete.exists()) {
                 if (fileToDelete.delete()) {
@@ -311,6 +311,6 @@ class MainActivity : AppCompatActivity() {
     // "選択解除" ボタン 활성화/비활성화 상태 업데이트
     private fun updateClearButtonState() {
         // 모델 경로가 있고, 로딩 중이 아닐 때 활성화
-        btnClearSelection.isEnabled = selectedModelPath != null && llmViewModel.isModelLoading.value != true
+        btnClearSelection.isEnabled = selectedModelPath != null && SlmViewModel.isModelLoading.value != true
     }
 }

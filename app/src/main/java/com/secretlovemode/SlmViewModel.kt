@@ -10,9 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LlmViewModel(application: Application) : AndroidViewModel(application) {
+class SlmViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val TAG = "LlmViewModel"
+    private val TAG = "SlmViewModel"
 
     // CharacterAi 인스턴스를 ViewModel 내에서 관리
     private var characterAi: CharacterAi? = null
@@ -60,39 +60,49 @@ class LlmViewModel(application: Application) : AndroidViewModel(application) {
 
         // viewModelScope는 ViewModel 클래스 내에서 직접 사용 가능
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d(TAG, "loadModel Coroutine 開始 (Thread: ${Thread.currentThread().name})")
-            // 기존 CharacterAi 인스턴스가 있다면 먼저 해제
-            characterAi?.close()
-            characterAi = null // 참조 해제
+            try {
+                // 기존 코드
+                Log.d(TAG, "loadModel Coroutine 開始 (Thread: ${Thread.currentThread().name})")
+                // 기존 CharacterAi 인스턴스가 있다면 먼저 해제
+                characterAi?.close()
+                characterAi = null // 참조 해제
 
-            // 새 CharacterAi 인스턴스 생성 및 초기화 시도
-            val newCharacterAi = CharacterAi(getApplication<Application>().applicationContext, modelPath)
+                // 새 CharacterAi 인스턴스 생성 및 초기화 시도
+                val newCharacterAi = CharacterAi(getApplication<Application>().applicationContext, modelPath)
 
-            // ViewModel 변수에 할당
-            characterAi = newCharacterAi
-            _loadedModelPath.postValue(modelPath) // 로드 시도하는 모델 경로 업데이트
+                // ViewModel 변수에 할당
+                characterAi = newCharacterAi
+                _loadedModelPath.postValue(modelPath) // 로드 시도하는 모델 경로 업데이트
 
-            Log.d(TAG, "CharacterAi インスタンス作成完了。初期化結果待ち。")
+                Log.d(TAG, "CharacterAi インスタンス作成完了。初期化結果待ち。")
 
-            // 초기화 결과를 메인 스레드에서 처리
-            withContext(Dispatchers.Main) {
-                Log.d(TAG, "loadModel Coroutine Main Context (Thread: ${Thread.currentThread().name})")
-                _isModelLoading.value = false // 로딩 완료 (성공 또는 실패)
+                // 초기화 결과를 메인 스레드에서 처리
+                withContext(Dispatchers.Main) {
+                    Log.d(TAG, "loadModel Coroutine Main Context (Thread: ${Thread.currentThread().name})")
+                    _isModelLoading.value = false // 로딩 완료 (성공 또는 실패)
 
-                if (newCharacterAi.isModelReady) {
-                    _isModelReady.value = true
-                    _loadingError.value = null
-                    Log.i(TAG, "LLM モデルロード成功: $modelPath")
-                } else {
-                    _isModelReady.value = false
-                    _loadingError.value = "モデルファイルの読み込みに失敗しました。" // 실제 오류 메시지는 CharacterAi 내부 로그 확인
-                    Log.e(TAG, "LLM モデルロード失敗: $modelPath")
-                    // 초기화 실패 시에도 CharacterAi 리소스 해제 시도 (CharacterAi 내부에서 이미 하지만, 여기서도 명시적으로)
-                    newCharacterAi.close()
-                    characterAi = null // 참조 해제
-                    _loadedModelPath.value = null // 실패 시 경로 초기화
+                    if (newCharacterAi.isModelReady) {
+                        _isModelReady.value = true
+                        _loadingError.value = null
+                        Log.i(TAG, "LLM モデルロード成功: $modelPath")
+                    } else {
+                        _isModelReady.value = false
+                        _loadingError.value = "モデルファイルの読み込みに失敗しました。" // 실제 오류 메시지는 CharacterAi 내부 로그 확인
+                        Log.e(TAG, "LLM モデルロード失敗: $modelPath")
+                        // 초기화 실패 시에도 CharacterAi 리소스 해제 시도 (CharacterAi 내부에서 이미 하지만, 여기서도 명시적으로)
+                        newCharacterAi.close()
+                        characterAi = null // 참조 해제
+                        _loadedModelPath.value = null // 실패 시 경로 초기화
+                    }
+                    Log.d(TAG, "loadModel Coroutine 完了")
                 }
-                Log.d(TAG, "loadModel Coroutine 完了")
+            } catch (e: Exception) {
+                Log.e(TAG, "LLM モデルロード中の例外: ${e.message}", e)
+                withContext(Dispatchers.Main) {
+                    _isModelLoading.value = false
+                    _isModelReady.value = false
+                    _loadingError.value = "モデルロード中にエラーが発生しました: ${e.message}"
+                }
             }
         }
     }

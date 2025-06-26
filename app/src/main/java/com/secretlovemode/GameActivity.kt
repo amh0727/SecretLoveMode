@@ -47,7 +47,7 @@ class GameActivity : AppCompatActivity() {
     private var characterLastSaid = ""
 
     // ViewModel 인스턴스
-    private lateinit var llmViewModel: LlmViewModel // 이렇게 변경
+    private lateinit var SlmViewModel: SlmViewModel // 이렇게 변경
 
     // MainActivity로부터 전달받을 모델 경로 (더 이상 필요 없지만, 혹시 몰라 남겨둠)
     // private lateinit var modelPathFromIntent: String
@@ -56,8 +56,7 @@ class GameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("GameActivity", "onCreate() 呼び出し")
-        llmViewModel = (application as MyApplication).llmViewModel
-
+        SlmViewModel = (application as MyApplication).SlmViewModel
         // 다크모드 강제 비활성화
         delegate.localNightMode = androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 
@@ -68,12 +67,12 @@ class GameActivity : AppCompatActivity() {
         setupUI()
 
         // ViewModel의 모델 준비 상태를 관찰
-        llmViewModel.isModelReady.observe(this) { isReady ->
+        SlmViewModel.isModelReady.observe(this) { isReady ->
             Log.d("GameActivity", "isModelReady 状態変化: $isReady")
             if (isReady) {
-                characterAi = llmViewModel.getCharacterAi()
+                characterAi = SlmViewModel.getCharacterAi()
                 if (characterAi != null) {
-                    val loadedModelPath = llmViewModel.loadedModelPath.value ?: "不明なパス"
+                    val loadedModelPath = SlmViewModel.loadedModelPath.value ?: "不明なパス"
                     val modelFileName = try { File(loadedModelPath).name } catch (e: Exception) { "unknown.task" }
                     showToastWithAnimation("AIの準備ができました！(${modelFileName}を使用) ✨")
                     startGame()
@@ -90,13 +89,13 @@ class GameActivity : AppCompatActivity() {
         }
 
         // ViewModel의 로딩 상태를 관찰 (선택 사항, MainActivity에서 주로 사용)
-        llmViewModel.isModelLoading.observe(this) { isLoading ->
+        SlmViewModel.isModelLoading.observe(this) { isLoading ->
             // GameActivity에서는 로딩 중 UI를 별도로 표시하지 않아도 됨 (MainActivity에서 이미 표시)
             // 필요하다면 여기에 로딩 스피너 등을 추가할 수 있음
             Log.d("GameActivity", "isModelLoading 状態変化: $isLoading")
         }
 
-        llmViewModel.loadingError.observe(this) { errorMessage ->
+        SlmViewModel.loadingError.observe(this) { errorMessage ->
             // 로딩 실패 시 MainActivity에서 Toast를 띄우므로 여기서는 추가 처리가 필요 없을 수 있음
             if (errorMessage != null) {
                 Log.e("GameActivity", "モデルロードエラー: $errorMessage")

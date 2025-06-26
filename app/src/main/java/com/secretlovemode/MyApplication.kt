@@ -16,12 +16,12 @@ class MyApplication : Application(), ViewModelStoreOwner {
         ViewModelStore()
     }
 
-    // 앱 전체에서 공유될 LlmViewModel 인스턴스
-    val llmViewModel: LlmViewModel by lazy {
+    // 앱 전체에서 공유될 SlmViewModel 인스턴스
+    val SlmViewModel: SlmViewModel by lazy {
         // ViewModelProvider에 ViewModelStoreOwner인 'this'(MyApplication)를 전달합니다.
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(this)
-        )[LlmViewModel::class.java]
+        )[SlmViewModel::class.java]
     }
 }

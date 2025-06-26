@@ -36,7 +36,7 @@ object ScenarioManager {
         if (scenarios.isNotEmpty()) return // 이미 로딩되었으면 다시 로딩하지 않음
 
         try {
-            val jsonString = context.assets.open("scenarios.json").bufferedReader().use { it.readText() }
+            val jsonString = context.assets.open("scenarios_kaoru.json").bufferedReader().use { it.readText() }
             scenarios = Json.decodeFromString<List<Scenario>>(jsonString)
             Log.d("ScenarioManager", "${scenarios.size}개의 시나리오를 성공적으로 로드했습니다.")
         } catch (e: Exception) {
