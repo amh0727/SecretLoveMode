@@ -120,7 +120,6 @@ class GameActivity : AppCompatActivity() {
         questionButton3 = findViewById(R.id.questionButton3)
         tvCharacterName = findViewById(R.id.tvCharacterName)
         tvAffinity = findViewById(R.id.tvAffinity)
-        tvDrunkenness = findViewById(R.id.tvDrunkenness)
         ivCharacter = findViewById(R.id.ivCharacter)
         scrollViewConversation = findViewById(R.id.scrollViewConversation)
     }

@@ -44,19 +44,9 @@
                 android:gravity="center"
                 android:text="好感度: 50" />
 
-        <View
-                android:layout_width="1dp"
-                android:layout_height="30dp"
-                android:background="@color/accent_pink" />
 
-        <TextView
-                android:id="@+id/tvDrunkenness"
-                style="@style/StatusText.Drunkenness"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="酔い具合: 0" />
+
+
     </LinearLayout>
 
     <!-- 캐릭터 이미지 -->

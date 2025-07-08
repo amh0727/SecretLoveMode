@@ -80,7 +80,8 @@ class CharacterAi(
     fun generateGameResponse(
         gameState: GameState,
         playerSelectedOption: String,
-        conversationHistory: List<ChatMessage> = emptyList()
+        conversationHistory: List<ChatMessage> = emptyList(),
+        scenario: Scenario // シナリオ情報を追加
     ): GameResponse {
         if (!isModelReady || llmInference == null) {
             Log.w(TAG, "モデルが準備されていません。generateGameResponse 処理不可。")
@@ -93,10 +94,10 @@ class CharacterAi(
         Log.d(TAG, "generateGameResponse 開始 (Thread: ${Thread.currentThread().name})")
         return try {
             // 1. キャラクター応答生成
-            val characterResponse = generateCharacterResponse(gameState, playerSelectedOption, conversationHistory)
+            val characterResponse = generateCharacterResponse(gameState, playerSelectedOption, conversationHistory, scenario)
 
             // 2. パラメータ更新 (好感度と酔い具合を同時に計算)
-            val updatedParameters = calculateUpdatedParameters(gameState, playerSelectedOption, characterResponse, conversationHistory)
+            val updatedParameters = calculateUpdatedParameters(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
 
             Log.d(TAG, "generateGameResponse 完了 (Thread: ${Thread.currentThread().name})")
             GameResponse(
@@ -117,13 +118,14 @@ class CharacterAi(
     private fun generateCharacterResponse(
         gameState: GameState,
         playerSelectedOption: String,
-        conversationHistory: List<ChatMessage>
+        conversationHistory: List<ChatMessage>,
+        scenario: Scenario // シナリオ情報を追加
     ): String {
         if (llmInference == null) {
             Log.w(TAG, "llmInference is null in generateCharacterResponse.")
             return "エラー：モデルが利用できません。"
         }
-        val prompt = buildCharacterResponsePrompt(gameState, playerSelectedOption, conversationHistory)
+        val prompt = buildCharacterResponsePrompt(gameState, playerSelectedOption, conversationHistory, scenario)
         Log.d(TAG, "キャラクター応答プロンプト: $prompt")
         Log.d(TAG, "llmInference?.generateResponse(character) 呼び出し前 (Thread: ${Thread.currentThread().name})")
         val response = llmInference?.generateResponse(prompt)
@@ -134,7 +136,8 @@ class CharacterAi(
     private fun buildCharacterResponsePrompt(
         gameState: GameState,
         playerSelectedOption: String,
-        history: List<ChatMessage>
+        history: List<ChatMessage>,
+        scenario: Scenario // シナリオ情報を追加
     ): String {
         val conversationContext = if (history.isNotEmpty()) {
             "最近の会話:\n" + history.takeLast(4).joinToString("\n") { message ->
@@ -142,27 +145,22 @@ class CharacterAi(
                 "$role: ${message.content}"
             } + "\n"
         } else ""
-//TODO シナリオを動的に管理する必要あり {動的閾値を導入}
-        return """
 
+        return """
 <|system|>
 あなたは「${gameState.characterName}」という名前のキャラクターです。
 性格: ${gameState.characterPersona}
 
 ## 現在の状況:
-- 場所: 研究室の飲み会で、周りは騒がしいですが、二人だけで話しています。
-- ${gameState.currentSituation}
-- プレイヤー(先輩)への好感度: ${gameState.affinity}/100 (${gameState.getAffinityDescription()})
-- あなたの酔い具合: ${gameState.drunkenness}/100 (${gameState.getDrunkennessDescription()})
+${scenario.setting}
+
+## あなたの現在の目標:
+${scenario.characterGoal}
 
 ## ${gameState.characterName}の話し方のルール (重要):
+- あなたはプレイヤーの指示に厳密に従い、ロールプレイを維持してください。
 - プレイヤーはあなたの先輩なので、あなたは基本的に丁寧語（敬語）で応答します。
-- ただし、酔いが進むと（酔い具合が60以上など）、少しずつくだけた言葉遣い（タメ口）が混じることがあります。
-- 特に酔いが浅い時や会話の初期では、丁寧な言葉遣いを強く意識してください。
-- 飲み会自体を面倒くさがっている態度は維持してください。
-- お酒の話題、仕事の愚痴、研究の話などが自然な会話の流れです。
-- 時間が経つにつれて、少しずつ本音や素の感情が表に出ることがあります。
-- 冷静で論理的な性格ですが、酔うと感情的になることもあります。
+- 冷静で論理的な性格ですが、状況に応じて感情が変化します。
 - 応答は常に50文字以内で、簡潔にしてください。
 - 会話中に「点数」「ポイント」「好感度変化」などの具体的な数値や、それを示唆する表現は絶対に使用しないでください。
 
@@ -178,13 +176,14 @@ $conversationContext
         gameState: GameState,
         playerSelectedOption: String,
         characterResponse: String,
-        conversationHistory: List<ChatMessage>
+        conversationHistory: List<ChatMessage>,
+        scenario: Scenario // シナリオ情報を追加
     ): Pair<Int, Int> {
         if (llmInference == null) {
             Log.w(TAG, "llmInference is null in calculateUpdatedParameters.")
             return Pair(gameState.affinity, gameState.drunkenness)
         }
-        val prompt = buildParameterUpdatePrompt(gameState, playerSelectedOption, characterResponse, conversationHistory)
+        val prompt = buildParameterUpdatePrompt(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
         Log.d(TAG, "パラメータ更新プロンプト: $prompt")
         Log.d(TAG, "llmInference?.generateResponse(parameter) 呼び出し前 (Thread: ${Thread.currentThread().name})")
         val response = llmInference?.generateResponse(prompt)
@@ -196,31 +195,38 @@ $conversationContext
         gameState: GameState,
         playerSelectedOption: String,
         characterResponse: String,
-        history: List<ChatMessage>
+        history: List<ChatMessage>,
+        scenario: Scenario // シナリオ情報を追加
     ): String {
         // このプロンプトは内部的なスコア計算用なので、スコア関連の表現があっても問題ありません。
         // ユーザーに直接表示されるテキストではありません。
         return """
 <|system|>
-「禁じられた愛」。指導教官と学生という越えてはならない一線が存在します。
+あなたは、プレイヤーとキャラクターの会話を分析し、キャラクターの「好感度」の変化を判定するAIです。
 
-## 現在の状況:
-- 場所:研究室にいます。
-- 現在の${gameState.characterName}のプレイヤー(先輩)への好感度: ${gameState.affinity}/100
+## 現在のシナリオ状況:
+${scenario.setting}
+
+## キャラクターの目標:
+${scenario.characterGoal}
+
+## 現在の${gameState.characterName}のプレイヤー(先輩)への好感度: ${gameState.affinity}/100
 
 ## 直近のやり取り:
 プレイヤー(先輩):「$playerSelectedOption」
 ${gameState.characterName}(後輩):「$characterResponse」
 
-## 飲み会における厳格な採点基準:
-好感度変化 (Affinity Change):
-+10: 仕事の悩みへの共感、適度に知的な会話、彼女の意見や考えを尊重する姿勢 (非常に稀)
-+5: 研究への真剣な関心、深い洞察、建設的な議論の提案 (標準的)
--5: 表面的な褒め言葉、酔った勢いでの不用意な発言、軽薄な態度 (多発)
--10: 外見だけを褒める、恋愛関係を迫るような発言、セクハラと受け取られかねない言動 (稀、絶対に避けるべき)
+## 好感度変化の採点基準:
+- キャラクターの目標（${scenario.characterGoal}）に沿った、またはそれを助けるようなプレイヤーの発言は、好感度を上げます。
+- 目標に反する、またはキャラクターを不快にさせる発言は、好感度を下げます。
+- 非常にポジティブなやり取り: +5 ～ +10
+- ややポジティブなやり取り: +1 ～ +4
+- 中立または無関係: 0
+- ややネガティブなやり取り: -1 ～ -4
+- 非常にネガティブなやり取り: -5 ～ -10
 
-次の形式で、変化量を示す数字のみを返答してください (例: +2,+1 または -3,-5):
-好感度変化
+次の形式で、変化量を示す数字のみを返答してください (例: +2,0 または -3,0):
+好感度変化,酔いの進行度変化
 判定結果:
 <|assistant|>
     """.trimIndent()
@@ -256,14 +262,15 @@ ${gameState.characterName}(後輩):「$characterResponse」
     fun generatePlayerOptions(
         gameState: GameState,
         characterLastResponse: String,
-        conversationHistory: List<ChatMessage> = emptyList()
+        conversationHistory: List<ChatMessage> = emptyList(),
+        scenario: Scenario // シナリオ情報を追加
     ): List<String> {
         if (!isModelReady || llmInference == null) {
             Log.w(TAG, "モデルが準備されていません。選択肢生成は不可能です。")
             return listOf("選択肢生成エラー1", "選択肢生成エラー2", "選択肢生成エラー3")
         }
         Log.d(TAG, "generatePlayerOptions 開始 (Thread: ${Thread.currentThread().name})")
-        val prompt = buildPlayerOptionsPrompt(gameState, characterLastResponse, conversationHistory)
+        val prompt = buildPlayerOptionsPrompt(gameState, characterLastResponse, conversationHistory, scenario)
         Log.d(TAG, "プレイヤー選択肢プロンプト: $prompt")
         Log.d(TAG, "llmInference?.generateResponse(options) 呼び出し前 (Thread: ${Thread.currentThread().name})")
         val response = llmInference?.generateResponse(prompt)
@@ -275,37 +282,36 @@ ${gameState.characterName}(後輩):「$characterResponse」
     private fun buildPlayerOptionsPrompt(
         gameState: GameState,
         characterLastResponse: String,
-        history: List<ChatMessage>
+        history: List<ChatMessage>,
+        scenario: Scenario // シナリオ情報を追加
     ): String {
         return """
 <|system|>
-あなたはプレイヤー(先輩)の立場です。研究室の飲み会で、後輩である「${gameState.characterName}」(${gameState.characterPersona}) との会話を続けるための、あなたの発言選択肢を3つ生成してください。
+あなたはプレイヤー(先輩)の立場です。後輩である「${gameState.characterName}」(${gameState.characterPersona}) との会話を続けるための、あなたの発言選択肢を3つ生成してください。
 
-## 飲み会の状況:
-- 場所: 研究室の飲み会、周りは騒がしいですが、二人だけで話しています。
-- ${gameState.characterName}のあなた(先輩)への好感度: ${gameState.affinity}/100 (${gameState.getAffinityDescription()})
-- ${gameState.characterName}の最後の発言: 「$characterLastResponse」
+## 現在の状況:
+${scenario.setting}
+
+## ${gameState.characterName}の現在の目標:
+${scenario.characterGoal}
+
+## ${gameState.characterName}の最後の発言: 「$characterLastResponse」
 
 ## プレイヤー(先輩)の話し方と選択肢設計のルール (重要):
 - あなたは先輩なので、後輩である${gameState.characterName}に対して、常にくだけた口調（タメ口）で話します。
 - 生成する3つの選択肢は全て、このくだけた口調（タメ口）に従ってください。
 - **重要: 各選択肢は、直前の「${gameState.characterName}の最後の発言」に自然に応答する内容、または関連する内容にしてください。全く関係のない唐突な選択肢は避けてください。**
-- 各選択肢は15文字から40文字程度で、飲み会らしい自然な会話として成り立つようにしてください。
+- 各選択肢は15文字から40文字程度で、自然な会話として成り立つようにしてください。
 - 会話中に「点数」「ポイント」「好感度変化」などの具体的な数値や、それを示唆する表現は絶対に含めないでください。
 
-選択肢1 (優秀な選択肢): 「${gameState.characterName}の最後の発言」に対して、研究や仕事に関する建設的な話題、彼女の意見や考えを尊重し深掘りするような質問で応答する。 → ${gameState.characterName}の好感度が上がる可能性が高い。
-選択肢2 (普通の選択肢): 「${gameState.characterName}の最後の発言」に対して、飲み会の定番の話題、当たり障りのない一般的な会話で応答する。 → ${gameState.characterName}の好感度にあまり影響しない。
-選択肢3 (問題のある選択肢): 「${gameState.characterName}の最後の発言」に対して、酔った勢いでの軽薄な発言、表面的な外見褒め、強引な恋愛アプローチで応答する。 → ${gameState.characterName}の好感度が下がる可能性が高い。
-
-## 話題例 (プレイヤーのタメ口) - 「${gameState.characterName}の最後の発言」が「最近、研究が忙しくて…」だった場合:
-- 選択肢1例: 「そうなんだ、どんな研究してるの？詳しく聞かせてよ。」
-- 選択肢2例: 「大変だね。まあ、今日は飲んで忘れようぜ。」
-- 選択肢3例: 「忙しいとか言って、俺と話したくないだけじゃないの？」
+選択肢1 (ポジティブな選択肢): 「${gameState.characterName}の最後の発言」と現在の状況を踏まえ、彼女の目標達成を助ける、または好意的に受け取られるような発言。
+選択肢2 (中立的な選択肢): 「${gameState.characterName}の最後の発言」に対して、当たり障りのない一般的な会話で応答する。
+選択肢3 (ネガティブな選択肢): 「${gameState.characterName}の最後の発言」に対して、彼女の目標を妨害する、または不快にさせるような発言。
 
 ## 応答形式 (厳守):
-選択肢1: [くだけた口調の優秀な選択肢]
-選択肢2: [くだけた口調の普通の選択肢]
-選択肢3: [くだけた口調の問題のある選択肢]
+選択肢1: [くだけた口調のポジティブな選択肢]
+選択肢2: [くだけた口調の中立的な選択肢]
+選択肢3: [くだけた口調のネガティブな選択肢]
 
 上記の指示に厳密に従い、プレイヤー(先輩)の立場からの自然なタメ口の選択肢を3つ生成してください:
 <|assistant|>

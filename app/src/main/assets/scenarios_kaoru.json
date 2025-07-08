@@ -43,13 +43,13 @@
     }
   },
   {
-    "id": "ENDING_A_GOOD",
-    "setting": "いつの間にか、窓の外が白み始めている。気まずかった沈黙は、今ではもう不快ではない。",
-    "characterGoal": "小さな微笑みと共に、「おかげで、助かりました」と心からの感謝を伝え、未来への余韻を残す。",
+    "id": "ENDING_C_BAD",
+    "setting": "結局、大きな成果もないまま夜が明けた。かおるは、もうあなたのことを見ていない。",
+    "characterGoal": "「お先に失礼します」と冷たい言葉だけを残し、あなたをいないもののように扱い、その場を立ち去る。",
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_GTE", "value": "65" }
+        { "type": "AFFINITY_GTE", "value": "29" }
       ]
     }
   },
@@ -65,13 +65,13 @@
     }
   },
   {
-    "id": "ENDING_C_BAD",
-    "setting": "結局、大きな成果もないまま夜が明けた。かおるは、もうあなたのことを見ていない。",
-    "characterGoal": "「お先に失礼します」と冷たい言葉だけを残し、あなたをいないもののように扱い、その場を立ち去る。",
+    "id": "ENDING_A_GOOD",
+    "setting": "いつの間にか、窓の外が白み始めている。気まずかった沈黙は、今ではもう不快ではない。",
+    "characterGoal": "小さな微笑みと共に、「おかげで、助かりました」と心からの感謝を伝え、未来への余韻を残す。",
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_LTE", "value": "29" }
+        { "type": "AFFINITY_GTE", "value": "65" }
       ]
     }
   }
