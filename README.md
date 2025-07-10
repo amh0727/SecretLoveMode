@@ -41,7 +41,7 @@ To build and run this project, you will need the following:
 
 - Android Studio (Latest version recommended)
 - Android SDK (Target: API 35)
-- Kotlin 2.0
+- Kotlin 2.0.21
 - Java SDK 21
 
 ### Installation and Running
