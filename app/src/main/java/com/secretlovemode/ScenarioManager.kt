@@ -29,7 +29,11 @@ data class Scenario(
 
 object ScenarioManager {
 
+    private const val DEFAULT_SCENARIO_ID = "CHAPTER_1_START"
+    private const val EVENT_SCENARIO_DURATION = 3
+
     private var scenarios: List<Scenario> = emptyList()
+    private var eventStartConversation = -1
 
     // 앱 시작 시 한번만 호출하여 시나리오를 로딩하는 함수
     fun loadScenarios(context: Context) {
@@ -44,15 +48,30 @@ object ScenarioManager {
         }
     }
 
+    // 테스트를 위해 시나리오를 직접 주입할 수 있는 함수
+    fun setScenariosForTest(testScenarios: List<Scenario>) {
+        scenarios = testScenarios
+    }
+
+    fun getDefaultScenario(): Scenario? = getScenario(DEFAULT_SCENARIO_ID)
+
     fun getScenario(id: String): Scenario? {
         return scenarios.find { it.id == id }
     }
 
     // 조건에 맞는 시나리오를 찾아 ID를 반환
     fun checkAndTriggerNextScenario(gameState: GameState): String {
-        if (gameState.currentScenarioId != "DEFAULT") {
-            // TODO: 현재 이벤트 시나리오를 종료할 조건 추가 (예: 대화 3회 후 DEFAULT로)
-            return gameState.currentScenarioId
+        val currentId = gameState.currentScenarioId
+
+        if (currentId.startsWith("EVENT_")) {
+            if (eventStartConversation >= 0 &&
+                gameState.conversationCount - eventStartConversation >= EVENT_SCENARIO_DURATION
+            ) {
+                Log.d("ScenarioManager", "イベント $currentId 終了条件達成")
+                eventStartConversation = -1
+                return "DEFAULT"
+            }
+            return currentId
         }
 
         // 모든 조건을 만족하는 첫번째 시나리오를 찾음
@@ -61,7 +80,15 @@ object ScenarioManager {
                 isConditionMet(condition, gameState)
             }
         }
-        return triggeredScenario?.id ?: "DEFAULT"
+
+        triggeredScenario?.let {
+            if (it.id.startsWith("EVENT_")) {
+                eventStartConversation = gameState.conversationCount
+                Log.d("ScenarioManager", "イベント ${it.id} 開始")
+            }
+        }
+
+        return triggeredScenario?.id ?: currentId
     }
 
     // JSON에 정의된 조건을 실제 게임 상태와 비교하여 판단하는 로직

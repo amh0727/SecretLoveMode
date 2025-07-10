@@ -378,9 +378,13 @@ class GameActivity : AppCompatActivity() {
 
                 val newScenarioId = ScenarioManager.checkAndTriggerNextScenario(gameState)
                 if (newScenarioId != previousScenarioId) {
-                    currentScenario = ScenarioManager.getScenario(newScenarioId)
+                    currentScenario = if (newScenarioId == "DEFAULT") {
+                        ScenarioManager.getDefaultScenario()
+                    } else {
+                        ScenarioManager.getScenario(newScenarioId)
+                    }
                     gameState = gameState.copy(currentScenarioId = newScenarioId)
-                    currentScenario?.let { 
+                    currentScenario?.let {
                         appendMessageToConversationWithAnimation("システム", "[状況変化]\n${it.setting}")
                     }
                 }
