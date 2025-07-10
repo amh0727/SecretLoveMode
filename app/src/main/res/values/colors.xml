@@ -13,7 +13,6 @@
 
     <!-- 상태 표시 색상 -->
     <color name="affinity_color">#FFFF6B6B</color>
-    <color name="drunkenness_color">#FF4ECDC4</color>
 
     <!-- 텍스트 색상 -->
     <color name="text_primary">#FF2C2C2C</color>
