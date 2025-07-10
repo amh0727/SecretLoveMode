@@ -13,7 +13,7 @@
 * **🤖 Intelligent Character AI**: This isn't just simple scripting. A character AI powered by a Large Language Model (LLM) reacts to your words and expresses emotions in real-time.
 * **📚 Dynamic Scenario System**: The story isn't hard-coded. Scenarios are loaded and managed from an external `json` file, allowing for easy addition and expansion of new storylines.
 * **🎨 Adaptive UI**: Button sizes and heights dynamically adjust based on the length of the dialogue text, always providing optimal readability.
-* **💖 Emotion State Management**: Based on your choices, the character's 'Affinity' and 'Drunkenness' levels change in real-time, directly impacting their tone, reactions, and the story's branching points.
+* **💖 Emotion State Management**: Based on your choices, the character's 'Affinity' level changes in real-time, directly impacting their tone, reactions, and the story's branching points.
 
 -----
 

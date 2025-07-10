@@ -39,7 +39,6 @@ class GameActivity : AppCompatActivity() {
     private lateinit var questionButton3: Button
     private lateinit var tvCharacterName: TextView
     private lateinit var tvAffinity: TextView
-    private lateinit var tvDrunkenness: TextView
     private lateinit var ivCharacter: ImageView
     private lateinit var scrollViewConversation: ScrollView
 
@@ -117,7 +116,6 @@ class GameActivity : AppCompatActivity() {
         tvCharacterName.setTextColor(ContextCompat.getColor(this, R.color.text_accent))
         tvConversation.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
         tvAffinity.setTextColor(ContextCompat.getColor(this, R.color.affinity_color))
-        tvDrunkenness.setTextColor(ContextCompat.getColor(this, R.color.drunkenness_color))
         listOf(questionButton1, questionButton2, questionButton3).forEach { button ->
             button.backgroundTintList = ContextCompat.getColorStateList(this, R.color.button_primary)
             button.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -246,7 +244,6 @@ class GameActivity : AppCompatActivity() {
 
     private fun updateStatusDisplay() {
         animateStatusUpdate(tvAffinity, "好感度: ${gameState.affinity} (${gameState.getAffinityDescription()})")
-        animateStatusUpdate(tvDrunkenness, "酔い具合: ${gameState.drunkenness} (${gameState.getDrunkennessDescription()})")
         val affinityColor = when {
             gameState.affinity <= 0 -> android.R.color.holo_red_dark
             gameState.affinity < 30 -> android.R.color.holo_red_light
@@ -254,8 +251,7 @@ class GameActivity : AppCompatActivity() {
             else -> R.color.affinity_color
         }
         tvAffinity.setTextColor(ContextCompat.getColor(this, affinityColor))
-        tvDrunkenness.setTextColor(ContextCompat.getColor(this, R.color.drunkenness_color))
-        Log.d("GameActivity", "Status Updated - Affinity: ${gameState.affinity}, Drunkenness: ${gameState.drunkenness}")
+        Log.d("GameActivity", "Status Updated - Affinity: ${gameState.affinity}")
     }
 
     private fun animateStatusUpdate(textView: TextView, newText: String) {
@@ -372,7 +368,6 @@ class GameActivity : AppCompatActivity() {
 
                 gameState = gameState.copy(
                     affinity = gameResponse.newAffinity,
-                    drunkenness = gameResponse.newDrunkenness,
                     conversationCount = gameState.conversationCount + 1
                 )
 

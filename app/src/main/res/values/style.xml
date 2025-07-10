@@ -21,10 +21,6 @@
         <item name="android:textColor">@color/affinity_color</item>
     </style>
 
-    <!-- 취기 스타일 -->
-    <style name="StatusText.Drunkenness">
-        <item name="android:textColor">@color/drunkenness_color</item>
-    </style>
 
     <!-- 대화 텍스트 스타일 -->
     <style name="ConversationText">

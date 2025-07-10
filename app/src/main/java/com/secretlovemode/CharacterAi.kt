@@ -14,8 +14,7 @@ data class ChatMessage(val role: String, val content: String) {
 
 data class GameResponse(
     val characterResponse: String,
-    val newAffinity: Int,
-    val newDrunkenness: Int
+    val newAffinity: Int
 )
 
 class CharacterAi(
@@ -87,8 +86,7 @@ class CharacterAi(
             Log.w(TAG, "モデルが準備されていません。generateGameResponse 処理不可。")
             return GameResponse(
                 "ごめんなさい、今はちょっと考えられません。（モデル準備エラー）",
-                gameState.affinity,
-                gameState.drunkenness
+                gameState.affinity
             )
         }
         Log.d(TAG, "generateGameResponse 開始 (Thread: ${Thread.currentThread().name})")
@@ -96,21 +94,19 @@ class CharacterAi(
             // 1. キャラクター応答生成
             val characterResponse = generateCharacterResponse(gameState, playerSelectedOption, conversationHistory, scenario)
 
-            // 2. パラメータ更新 (好感度と酔い具合を同時に計算)
-            val updatedParameters = calculateUpdatedParameters(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
+            // 2. パラメータ更新 (好感度を計算)
+            val newAffinity = calculateUpdatedAffinity(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
 
             Log.d(TAG, "generateGameResponse 完了 (Thread: ${Thread.currentThread().name})")
             GameResponse(
                 characterResponse,
-                updatedParameters.first, // 新しい好感度
-                updatedParameters.second // 新しい酔い具合レベル
+                newAffinity
             )
         } catch (e: Exception) {
             Log.e(TAG, "ゲーム応答生成中にエラー発生: ${e.message}", e)
             GameResponse(
                 "ごめんなさい、ちょっと混乱しています。（エラー発生）",
-                gameState.affinity,
-                gameState.drunkenness
+                gameState.affinity
             )
         }
     }
@@ -172,23 +168,23 @@ $conversationContext
     """.trimIndent()
     }
 
-    private fun calculateUpdatedParameters(
+    private fun calculateUpdatedAffinity(
         gameState: GameState,
         playerSelectedOption: String,
         characterResponse: String,
         conversationHistory: List<ChatMessage>,
         scenario: Scenario // シナリオ情報を追加
-    ): Pair<Int, Int> {
+    ): Int {
         if (llmInference == null) {
-            Log.w(TAG, "llmInference is null in calculateUpdatedParameters.")
-            return Pair(gameState.affinity, gameState.drunkenness)
+            Log.w(TAG, "llmInference is null in calculateUpdatedAffinity.")
+            return gameState.affinity
         }
         val prompt = buildParameterUpdatePrompt(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
         Log.d(TAG, "パラメータ更新プロンプト: $prompt")
         Log.d(TAG, "llmInference?.generateResponse(parameter) 呼び出し前 (Thread: ${Thread.currentThread().name})")
         val response = llmInference?.generateResponse(prompt)
         Log.d(TAG, "llmInference?.generateResponse(parameter) 呼び出し後 (Thread: ${Thread.currentThread().name})")
-        return parseParameterUpdate(response, gameState.affinity, gameState.drunkenness)
+        return parseParameterUpdate(response, gameState.affinity)
     }
 
     private fun buildParameterUpdatePrompt(
@@ -225,37 +221,27 @@ ${gameState.characterName}(後輩):「$characterResponse」
 - ややネガティブなやり取り: -1 ～ -4
 - 非常にネガティブなやり取り: -5 ～ -10
 
-次の形式で、変化量を示す数字のみを返答してください (例: +2,0 または -3,0):
-好感度変化,酔いの進行度変化
+次の形式で、変化量を示す数字のみを返答してください (例: +2 または -3):
+好感度変化
 判定結果:
 <|assistant|>
     """.trimIndent()
     }
 
-    private fun parseParameterUpdate(response: String?, currentAffinity: Int, currentDrunkenness: Int): Pair<Int, Int> {
+    private fun parseParameterUpdate(response: String?, currentAffinity: Int): Int {
         if (response.isNullOrBlank()) {
-            return Pair(currentAffinity, currentDrunkenness)
+            return currentAffinity
         }
 
         return try {
             val cleanResponse = response.replace(" ", "").replace("　", "") // 空白除去
-            val parts = cleanResponse.split(",")
-
-            if (parts.size >= 2) {
-                val affinityChange = parts[0].replace("+", "").toIntOrNull() ?: 0
-                val drunkennessChange = parts[1].replace("+", "").toIntOrNull() ?: 0
-
-                val newAffinity = (currentAffinity + affinityChange).coerceIn(0, 100)
-                val newDrunkenness = (currentDrunkenness + drunkennessChange).coerceIn(0, 100)
-
-                Log.d(TAG, "パラメータ更新: 好感度 $currentAffinity -> $newAffinity, 酔い具合 $currentDrunkenness -> $newDrunkenness")
-                Pair(newAffinity, newDrunkenness)
-            } else {
-                Pair(currentAffinity, currentDrunkenness)
-            }
+            val affinityChange = cleanResponse.replace("+", "").toIntOrNull() ?: 0
+            val newAffinity = (currentAffinity + affinityChange).coerceIn(0, 100)
+            Log.d(TAG, "パラメータ更新: 好感度 $currentAffinity -> $newAffinity")
+            newAffinity
         } catch (e: Exception) {
             Log.e(TAG, "パラメータ解析エラー: ${e.message}")
-            Pair(currentAffinity, currentDrunkenness)
+            currentAffinity
         }
     }
 

@@ -15,7 +15,6 @@
 
     <!-- 상태 표시 색상 (다크모드에서도 잘 보이게) -->
     <color name="affinity_color">#FFFF8A8A</color>
-    <color name="drunkenness_color">#FF7DEDE6</color>
 
     <!-- 텍스트 색상 (다크모드) -->
     <color name="text_primary">#FFFFFFFF</color>

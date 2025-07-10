@@ -5,7 +5,6 @@ data class GameState(
     val characterPersona: String = "真面目で優秀な大学院生。指導教官であるプレイヤーに惹かれているが、その気持ちを悟られないよう必死に隠している。冷静沈着を装っているが、内心は常に揺れ動いている。",
     val currentSituation: String = "研究室で、指導教官のあなたと二人きりで話している。",
     val affinity: Int = 40, // 초기 호감도를 더 낮게 설정
-    val drunkenness: Int = 0,
     val conversationCount: Int = 0,
     val currentScenarioId: String = "DEFAULT" // 현재 시나리오 ID를 저장. "DEFAULT"는 일반 대화 상태.
 
@@ -20,13 +19,6 @@ data class GameState(
         else -> "最悪"
     }
 
-    fun getDrunkennessDescription(): String = when {
-        drunkenness >= 80 -> "かなり酔っている"
-        drunkenness >= 60 -> "酔っている"
-        drunkenness >= 40 -> "ほろ酔い"
-        drunkenness >= 20 -> "少し酔っている"
-        else -> "素面"
-    }
     
     // 호감도 변화량을 더 엄격하게 계산
     fun calculateAffinityChange(playerChoice: String, characterResponse: String): Int {
