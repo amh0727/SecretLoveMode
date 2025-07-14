@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -147,13 +148,20 @@ class CharacterAi(
         try {
             llmInference?.generateResponseAsync(prompt) { partialResult, done ->
                 partialResult?.let(onPartialResult)
-                if (done) {
-                    if (!deferred.isCompleted) deferred.complete(Unit)
+                if (done && !deferred.isCompleted) {
+                    deferred.complete(Unit)
                 }
             }
             deferred.await() // AI 작업이 끝날 때까지 여기서 대기
+        } catch (ce: CancellationException) {
+            // 호출이 중단된 경우 세션을 초기화하여 이후 호출을 방지합니다.
+            llmInference?.resetImplicitSession()
+            Log.w(TAG, "AI 호출이 취소되었습니다.", ce)
+            if (!deferred.isCompleted) deferred.completeExceptionally(ce)
+            throw ce
         } catch (e: Exception) {
             Log.e(TAG, "generateResponseInternal 실행 중 오류 발생", e)
+            llmInference?.resetImplicitSession()
             if (!deferred.isCompleted) deferred.completeExceptionally(e)
         }
     }
