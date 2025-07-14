@@ -123,113 +123,126 @@ class GameActivity : AppCompatActivity() {
         gameState = gameState.copy(currentScenarioId = initialScenarioId)
 
         appendSystemMessage("[状況]\n${currentScenario!!.setting}")
-        handlePlayerAction("(あなたは静かに彼女の前に座っていました)", isInitialAction = true)
+        handleInitialTurn()
     }
 
     private fun onPlayerOptionSelected(selectedOptionText: String) {
-        if (characterAi == null || !characterAi!!.isModelReady || currentScenario == null) {
+        // 1. AI가 준비되었는지 안전하게 확인합니다.
+        if (characterAi == null || !characterAi!!.isModelReady) {
             showToastWithAnimation("AIがまだ準備できていません")
             return
         }
+
+        // 2. 어떤 선택지를 눌렀는지 로그를 남깁니다. (디버깅에 유용)
         Log.d(TAG, "選択: $selectedOptionText")
+
+        // 3. 플레이어의 선택을 대화창에 표시합니다.
         appendPlayerMessage(selectedOptionText)
+
+        // 4. AI에게 다음 턴 처리를 요청하는 핵심 함수를 호출합니다.
         handlePlayerAction(selectedOptionText)
     }
 
     /**
-     * 모든 AI 관련 작업을 이 함수 안에서 순차적으로 처리하도록 통합합니다.
+     *  게임 시작 턴을 처리하는 함수. AI를 한 번만 호출합니다.
      */
-    private fun handlePlayerAction(playerAction: String, isInitialAction: Boolean = false) {
+    private fun handleInitialTurn() {
+        val scenarioForResponse = currentScenario ?: return
+        disableAllOptions()
+        showLoadingMessage("${gameState.characterName}が考えています... ")
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val initialTurnResult = characterAi!!.processInitialTurn(
+                    gameState = gameState,
+                    scenario = scenarioForResponse
+                )
+
+                // AI 작업이 모두 끝난 후 UI 업데이트
+                withContext(Dispatchers.Main) {
+                    // 1. 받아온 전체 응답을 스트리밍 효과와 함께 표시
+                    displayFullResponse(initialTurnResult.fullInitialResponse)
+                    conversationHistory.add(ChatMessage(ChatMessage.ROLE_MODEL, initialTurnResult.fullInitialResponse))
+
+                    // 2. 첫 선택지 표시
+                    presentPlayerChoices(initialTurnResult.firstPlayerOptions)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "초기 턴 처리 실패", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@GameActivity, "エラーが発生しました: ${e.message}", Toast.LENGTH_LONG).show()
+                    presentPlayerChoices(listOf("うん", "いいえ", "よくわからない"))
+                }
+            }
+        }
+    }
+    /**
+     * 완성된 텍스트를 받아와 한 글자씩 보여주며 스트리밍 효과를 내는 함수
+     * @param fullText AI가 생성한 전체 응답 문자열
+     */
+    private suspend fun displayFullResponse(fullText: String) {
+        // 1. "생각 중..." 메시지를 지웁니다.
+        removeLoadingMessage()
+        // 2. 캐릭터 이름과 콜론을 추가합니다.
+        tvConversation.append("\n${gameState.characterName}: ")
+
+        // 3. 한 글자씩 타이핑 효과를 주며 텍스트를 추가합니다.
+        for (char in fullText) {
+            tvConversation.append(char.toString())
+            scrollToBottom()
+            delay(50) // 글자 사이의 딜레이 (0.05초). 이 값을 조절하여 타이핑 속도를 바꿀 수 있습니다.
+        }
+
+        // 4. 응답이 모두 표시된 후, 다음 대화를 위해 줄바꿈을 추가합니다.
+        tvConversation.append("\n\n")
+        scrollToBottom()
+    }
+
+    /**
+     * [핵심 수정] 플레이어의 행동을 처리하는 함수. AI를 한 번만 호출합니다.
+     */
+    private fun handlePlayerAction(playerAction: String) {
         val scenarioForResponse = currentScenario ?: return
         disableAllOptions()
         showLoadingMessage("${gameState.characterName}が考えています... ")
         conversationHistory.add(ChatMessage(ChatMessage.ROLE_USER, playerAction))
 
-        lifecycleScope.launch(Dispatchers.IO) { // 백그라운드 스레드에서 AI 작업 수행
-            // 1. AI 대사 스트리밍 및 전체 응답 받기
-            val fullResponse = displayResponseWithStreamingEffect(playerAction, scenarioForResponse)
-            conversationHistory.add(ChatMessage(ChatMessage.ROLE_MODEL, fullResponse))
-
-            // 2. 호감도 계산
-            val newAffinity = characterAi!!.calculateAffinity(
-                gameState = gameState,
-                playerSelectedOption = playerAction,
-                fullCharacterResponse = fullResponse,
-                conversationHistory = conversationHistory,
-                scenario = scenarioForResponse
-            )
-
-            // 3. 게임 상태 업데이트 (UI 스레드에서)
-            withContext(Dispatchers.Main) {
-                processGameStateUpdate(newAffinity, isInitialAction)
-            }
-
-            // 4. 게임 오버가 아니고 대화 횟수가 남았다면 다음 선택지 생성
-            if (gameState.affinity > 0 && gameState.conversationCount < MAX_CONVERSATION_COUNT) {
-                val options = characterAi!!.generatePlayerOptions(
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val turnResult = characterAi!!.processPlayerTurn(
                     gameState = gameState,
-                    characterLastResponse = fullResponse,
+                    playerSelectedOption = playerAction,
                     conversationHistory = conversationHistory,
                     scenario = scenarioForResponse
                 )
-                // 5. 선택지 표시 (UI 스레드에서)
+
                 withContext(Dispatchers.Main) {
-                    presentPlayerChoices(options)
-                }
-            } else {
-                // 게임 종료 메시지 표시
-                withContext(Dispatchers.Main) {
-                    if (gameState.affinity > 0) { // 대화 횟수 초과로 종료된 경우
-                        appendSystemMessage("会話が終わりました！")
+                    displayFullResponse(turnResult.fullCharacterResponse)
+                    conversationHistory.add(ChatMessage(ChatMessage.ROLE_MODEL, turnResult.fullCharacterResponse))
+                    processGameStateUpdate(turnResult.updatedAffinity, false)
+
+                    if (gameState.affinity > 0 && gameState.conversationCount < MAX_CONVERSATION_COUNT) {
+                        presentPlayerChoices(turnResult.nextPlayerOptions)
+                    } else {
+                        if (gameState.affinity > 0) {
+                            appendSystemMessage("会話が終わりました！")
+                        }
+                        disableAllOptions()
                     }
-                    disableAllOptions()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "턴 처리 중 오류 발생", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@GameActivity, "エラーが発生しました: ${e.message}", Toast.LENGTH_LONG).show()
+                    presentPlayerChoices(listOf("うん", "いいえ", "よくわからない"))
                 }
             }
         }
     }
 
-    /**
-     * AI 응답을 스트리밍하고, 최종적으로 완성된 전체 문자열을 반환하는 suspend 함수로 변경합니다.
-     */
-    private suspend fun displayResponseWithStreamingEffect(playerAction: String, scenario: Scenario): String {
-        val fullResponseBuilder = StringBuilder()
 
-        // UI 업데이트를 위해 메인 스레드로 전환
-        withContext(Dispatchers.Main) {
-            removeLoadingMessage()
-            val messagePrefix = "${gameState.characterName}: "
-            tvConversation.append(messagePrefix)
-        }
 
-        // AI 스트리밍 호출 (이 함수는 내부적으로 완료될 때까지 기다립니다)
-        characterAi!!.generateCharacterResponseStream(
-            gameState = gameState,
-            playerSelectedOption = playerAction,
-            conversationHistory = conversationHistory,
-            scenario = scenario
-        ) { partialResult ->
-            // AI가 생성한 부분 텍스트를 UI에 즉시 반영
-            lifecycleScope.launch(Dispatchers.Main) {
-                fullResponseBuilder.append(partialResult)
-                val messagePrefix = "${gameState.characterName}: "
-                val currentText = tvConversation.text.toString()
-                val lastPrefixIndex = currentText.lastIndexOf(messagePrefix)
-                if (lastPrefixIndex != -1) {
-                    val baseText = currentText.substring(0, lastPrefixIndex + messagePrefix.length)
-                    tvConversation.text = baseText + fullResponseBuilder.toString()
-                }
-                scrollToBottom()
-            }
-        }
 
-        // 스트리밍이 모두 끝나면 줄바꿈 추가
-        withContext(Dispatchers.Main) {
-            tvConversation.append("\n\n")
-            scrollToBottom()
-        }
-
-        return fullResponseBuilder.toString()
-    }
 
     /**
      * 게임 상태 업데이트 로직만 따로 분리

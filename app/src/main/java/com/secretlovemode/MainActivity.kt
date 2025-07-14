@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        PromptManager.loadPrompts(applicationContext)
         slmViewModel = (application as MyApplication).slmViewModel
 
         initializeViews()
