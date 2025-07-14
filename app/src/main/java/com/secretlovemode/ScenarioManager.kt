@@ -24,7 +24,8 @@ data class Scenario(
     val id: String,
     val setting: String,
     val characterGoal: String,
-    val trigger: Trigger // 로직 대신 트리거 데이터 객체를 가짐
+    val trigger: Trigger, // 로직 대신 트리거 데이터 객체를 가짐
+    val season: String? = null // 특정 계절에만 적용 (e.g., "SPRING"), 없으면 모든 계절
 )
 
 object ScenarioManager {
@@ -32,31 +33,30 @@ object ScenarioManager {
     private const val DEFAULT_SCENARIO_ID = "CHAPTER_1_START"
     private const val EVENT_SCENARIO_DURATION = 3
 
-    private var scenarios: List<Scenario> = emptyList()
+    private var currentScenarios: List<Scenario> = emptyList()
     private var eventStartConversation = -1
 
     // 앱 시작 시 한번만 호출하여 시나리오를 로딩하는 함수
-    fun loadScenarios(context: Context) {
-        if (scenarios.isNotEmpty()) return // 이미 로딩되었으면 다시 로딩하지 않음
-
+    fun loadScenarios(context: Context, scenarioFileName: String) {
         try {
-            val jsonString = context.assets.open("scenarios_kaoru.json").bufferedReader().use { it.readText() }
-            scenarios = Json.decodeFromString<List<Scenario>>(jsonString)
-            Log.d("ScenarioManager", "${scenarios.size}개의 시나리오를 성공적으로 로드했습니다.")
+            val jsonString = context.assets.open(scenarioFileName).bufferedReader().use { it.readText() }
+            currentScenarios = Json.decodeFromString<List<Scenario>>(jsonString)
+            Log.d("ScenarioManager", "'${scenarioFileName}'에서 ${currentScenarios.size}개의 시나리오를 성공적으로 로드했습니다.")
         } catch (e: Exception) {
-            Log.e("ScenarioManager", "시나리오 파일 로딩 실패", e)
+            Log.e("ScenarioManager", "'${scenarioFileName}' 파일 로딩 실패", e)
+            currentScenarios = emptyList() // 실패 시 리스트를 비웁니다.
         }
     }
 
     // 테스트를 위해 시나리오를 직접 주입할 수 있는 함수
     fun setScenariosForTest(testScenarios: List<Scenario>) {
-        scenarios = testScenarios
+        currentScenarios = testScenarios
     }
 
     fun getDefaultScenario(): Scenario? = getScenario(DEFAULT_SCENARIO_ID)
 
     fun getScenario(id: String): Scenario? {
-        return scenarios.find { it.id == id }
+        return currentScenarios.find { it.id == id }
     }
 
     // 조건에 맞는 시나리오를 찾아 ID를 반환
@@ -74,8 +74,13 @@ object ScenarioManager {
             return currentId
         }
 
+        // 현재 계절에 맞는 시나리오만 필터링
+        val seasonMatchingScenarios = currentScenarios.filter { 
+            it.season == null || it.season.equals(gameState.currentSeason.name, ignoreCase = true)
+        }
+
         // 모든 조건을 만족하는 첫번째 시나리오를 찾음
-        val triggeredScenario = scenarios.find { scenario ->
+        val triggeredScenario = seasonMatchingScenarios.find { scenario ->
             scenario.trigger.conditions.all { condition ->
                 isConditionMet(condition, gameState)
             }

@@ -27,7 +27,7 @@
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "5" },
-        { "type": "AFFINITY_GTE", "value": "35" }
+        { "type": "AFFINITY_GTE", "value": "50" }
       ]
     }
   },
@@ -38,7 +38,7 @@
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "11" },
-        { "type": "AFFINITY_GTE", "value": "45" }
+        { "type": "AFFINITY_GTE", "value": "55" }
       ]
     }
   },
@@ -49,7 +49,7 @@
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_GTE", "value": "29" }
+        { "type": "AFFINITY_GTE", "value": "25" }
       ]
     }
   },
@@ -60,7 +60,7 @@
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_GTE", "value": "30" }
+        { "type": "AFFINITY_GTE", "value": "60" }
       ]
     }
   },
@@ -71,6 +71,49 @@
     "trigger": {
       "conditions": [
         { "type": "CONVERSATION_GTE", "value": "15" },
+        { "type": "AFFINITY_GTE", "value": "70" }
+      ]
+    }
+  },
+  {
+    "id": "EVENT_CONFESSION",
+    "setting": "意を決したあなたは、かおるの目を見て、まっすぐに気持ちを伝えようとしている。",
+    "characterGoal": "突然の告白に驚き、顔を赤らめながらも、あなたの言葉を真剣に聞こうとする。",
+    "trigger": {
+      "conditions": [
+        { "type": "PLAYER_ACTION", "value": "CONFESS" } 
+      ]
+    }
+  },
+  {
+    "id": "ENDING_S_SUCCESS",
+    "setting": "あなたの言葉に、かおるは潤んだ目で見つめ返してくる。長い沈黙の後、彼女は小さく頷いた。",
+    "characterGoal": "「…私も、先輩のことが…」と言葉を詰まらせながらも、精一杯の勇気で気持ちを受け入れる。",
+    "trigger": {
+      "conditions": [
+        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_CONFESSION" },
+        { "type": "AFFINITY_GTE", "value": "90" }
+      ]
+    }
+  },
+  {
+    "id": "ENDING_A_PENDING",
+    "setting": "かおるは驚きと戸惑いが入り混じった表情で、視線をさまよわせている。",
+    "characterGoal": "「少し、考えさせてください」と、すぐに答えを出すことを避け、時間をもらおうとする。",
+    "trigger": {
+      "conditions": [
+        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_CONFESSION" },
+        { "type": "AFFINITY_GTE", "value": "70" }
+      ]
+    }
+  },
+  {
+    "id": "ENDING_F_REJECTED",
+    "setting": "あなたの告白を聞いたかおるは、悲しそうな、申し訳なさそうな顔で黙り込んでしまう。",
+    "characterGoal": "「ごめんなさい…。あなたの気持ちには、応えられません」と、はっきりと、しかし辛そうに断る。",
+    "trigger": {
+      "conditions": [
+        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_CONFESSION" },
         { "type": "AFFINITY_GTE", "value": "65" }
       ]
     }

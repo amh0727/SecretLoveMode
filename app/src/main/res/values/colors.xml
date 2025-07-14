@@ -12,7 +12,9 @@
     <color name="button_pressed">#FF4A50E2</color>
 
     <!-- 상태 표시 색상 -->
-    <color name="affinity_color">#FFFF6B6B</color>
+    <color name="affinity_up">#FFFF6B6B</color>
+    <color name="affinity_down">#FF6B6BFF</color>
+
 
     <!-- 텍스트 색상 -->
     <color name="text_primary">#FF2C2C2C</color>
@@ -28,4 +30,7 @@
     <color name="background_light">#FFFAFAFA</color>
     <color name="card_background">#FFFFFFFF</color>
     <color name="conversation_background">#FFF8F9FA</color>
+
+    <!-- 고백 버튼 색상 -->
+    <color name="confess_button_red">#FFD32F2F</color>
 </resources>

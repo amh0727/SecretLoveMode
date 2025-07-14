@@ -38,11 +38,15 @@
         <TextView
                 android:id="@+id/tvAffinity"
                 style="@style/StatusText.Affinity"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="好感度: 50" />
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCharacterName"
+                tools:text="好感度: 50 (好意的)" />
 
 
 
@@ -73,6 +77,16 @@
                 android:src="@drawable/character_image_pre"
                 android:background="@color/conversation_background"/>
     </androidx.cardview.widget.CardView>
+
+    <!-- 파티클 뷰 추가 -->
+    <com.secretlovemode.ParticleView
+            android:id="@+id/particleView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@+id/characterCard"
+            app:layout_constraintBottom_toBottomOf="@+id/conversationCard"
+            app:layout_constraintStart_toStartOf="@+id/characterCard"
+            app:layout_constraintEnd_toEndOf="@+id/characterCard" />
 
     <!-- 대화 카드 -->
 
@@ -147,6 +161,25 @@
                 android:layout_height="wrap_content"
                 android:minHeight="56dp"
                 android:text="選択肢 3"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConfess"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="告白する"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/confess_button_red"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_heart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white"
+                android:visibility="gone"
+                tools:visibility="visible" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

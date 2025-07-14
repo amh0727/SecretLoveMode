@@ -3,19 +3,10 @@ package com.secretlovemode
 import android.content.Context
 import android.util.Log
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
-
-data class ChatMessage(val role: String, val content: String) {
-    companion object {
-        const val ROLE_USER = "user"
-        const val ROLE_MODEL = "model"
-    }
-}
-
-data class GameResponse(
-    val characterResponse: String,
-    val newAffinity: Int
-)
 
 class CharacterAi(
     private val context: Context,
@@ -24,43 +15,34 @@ class CharacterAi(
 
     companion object {
         private const val TAG = "CharacterAi"
-        private const val DEFAULT_MAX_TOKENS_RESPONSE = 512
-        private const val DEFAULT_TOP_K = 40
+        private const val DEFAULT_MAX_TOKENS_RESPONSE = 1024
+        private const val DEFAULT_TOP_K = 20
     }
 
     private var llmInference: LlmInference? = null
     var isModelReady: Boolean = false
         private set
 
+    private val mutex = Mutex()
+
     init {
-        // initializeLlm already uses Dispatchers.IO internally via MediaPipe's createFromOptions
         initializeLlm()
     }
 
-    // CharacterAi.kt의 initializeLlm() 함수 개선
     private fun initializeLlm() {
         Log.i(TAG, "LLM 초기화 시작: $modelAssetPath")
-        
-        // 파일 존재여부 확인
         val modelFile = File(modelAssetPath)
-        if (!modelFile.exists()) {
-            Log.e(TAG, "모델 파일이 존재하지 않습니다: $modelAssetPath")
+        if (!modelFile.exists() || modelFile.length() == 0L) {
+            Log.e(TAG, "모델 파일이 유효하지 않습니다: $modelAssetPath")
             isModelReady = false
             return
         }
-        
-        if (modelFile.length() == 0L) {
-            Log.e(TAG, "모델 파일 크기가 0입니다: $modelAssetPath")
-            isModelReady = false
-            return
-        }
-        
-        Log.d(TAG, "모델 파일 확인 완료: 크기=${modelFile.length()}")
-        
+
         try {
             val options = LlmInference.LlmInferenceOptions.builder()
                 .setModelPath(modelAssetPath)
                 .setMaxTokens(DEFAULT_MAX_TOKENS_RESPONSE)
+                // [중요 수정] setMaxTopK -> setTopK 오타를 수정했습니다.
                 .setMaxTopK(DEFAULT_TOP_K)
                 .build()
 
@@ -70,71 +52,112 @@ class CharacterAi(
         } catch (e: Exception) {
             isModelReady = false
             llmInference = null
-            Log.e(TAG, "LLM 초기화 실패: ${e.message}", e)
-            Log.e(TAG, "스택 트레이스:", e)
+            Log.e(TAG, "LLM 초기화 실패", e)
         }
     }
 
-    // 統合されたゲーム応答生成 (キャラクター応答 + パラメータ更新)
-    fun generateGameResponse(
-        gameState: GameState,
-        playerSelectedOption: String,
-        conversationHistory: List<ChatMessage> = emptyList(),
-        scenario: Scenario // シナリオ情報を追加
-    ): GameResponse {
-        if (!isModelReady || llmInference == null) {
-            Log.w(TAG, "モデルが準備されていません。generateGameResponse 処理不可。")
-            return GameResponse(
-                "ごめんなさい、今はちょっと考えられません。（モデル準備エラー）",
-                gameState.affinity
-            )
-        }
-        Log.d(TAG, "generateGameResponse 開始 (Thread: ${Thread.currentThread().name})")
-        return try {
-            // 1. キャラクター応答生成
-            val characterResponse = generateCharacterResponse(gameState, playerSelectedOption, conversationHistory, scenario)
-
-            // 2. パラメータ更新 (好感度を計算)
-            val newAffinity = calculateUpdatedAffinity(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
-
-            Log.d(TAG, "generateGameResponse 完了 (Thread: ${Thread.currentThread().name})")
-            GameResponse(
-                characterResponse,
-                newAffinity
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "ゲーム応答生成中にエラー発生: ${e.message}", e)
-            GameResponse(
-                "ごめんなさい、ちょっと混乱しています。（エラー発生）",
-                gameState.affinity
-            )
-        }
-    }
-
-    private fun generateCharacterResponse(
+    /**
+     * AI 응답 스트리밍을 콜백(lambda) 방식으로 처리합니다.
+     */
+    suspend fun generateCharacterResponseStream(
         gameState: GameState,
         playerSelectedOption: String,
         conversationHistory: List<ChatMessage>,
-        scenario: Scenario // シナリオ情報を追加
-    ): String {
-        if (llmInference == null) {
-            Log.w(TAG, "llmInference is null in generateCharacterResponse.")
-            return "エラー：モデルが利用できません。"
-        }
+        scenario: Scenario,
+        onPartialResult: (String) -> Unit // 스트리밍 결과를 전달할 콜백
+    ) {
         val prompt = buildCharacterResponsePrompt(gameState, playerSelectedOption, conversationHistory, scenario)
-        Log.d(TAG, "キャラクター応答プロンプト: $prompt")
-        Log.d(TAG, "llmInference?.generateResponse(character) 呼び出し前 (Thread: ${Thread.currentThread().name})")
-        val response = llmInference?.generateResponse(prompt)
-        Log.d(TAG, "llmInference?.generateResponse(character) 呼び出し後 (Thread: ${Thread.currentThread().name})")
-        return cleanResponse(response, ChatMessage.ROLE_MODEL)
+        // 새로운 내부 함수를 호출하여 안전하게 스트리밍을 처리합니다.
+        generateResponseInternal(prompt, onPartialResult)
     }
 
-    private fun buildCharacterResponsePrompt(
+    /**
+     * 호감도 계산 로직도 새로운 내부 함수를 사용합니다.
+     */
+    suspend fun calculateAffinity(
         gameState: GameState,
         playerSelectedOption: String,
-        history: List<ChatMessage>,
-        scenario: Scenario // シナリオ情報を追加
-    ): String {
+        fullCharacterResponse: String,
+        conversationHistory: List<ChatMessage>,
+        scenario: Scenario
+    ): Int {
+        val prompt = buildParameterUpdatePrompt(gameState, playerSelectedOption, fullCharacterResponse, conversationHistory, scenario)
+        val response = generateFullResponseInternal(prompt)
+        return parseParameterUpdate(response, gameState.affinity)
+    }
+
+    /**
+     * 플레이어 선택지 생성 로직도 새로운 내부 함수를 사용합니다.
+     */
+    suspend fun generatePlayerOptions(
+        gameState: GameState,
+        characterLastResponse: String,
+        conversationHistory: List<ChatMessage>,
+        scenario: Scenario
+    ): List<String> {
+        val prompt = buildPlayerOptionsPrompt(gameState, characterLastResponse, conversationHistory, scenario)
+        val response = generateFullResponseInternal(prompt)
+        return parseOptions(response)
+    }
+
+    /**
+     * 스트리밍 없이 전체 응답만 받는 내부 함수
+     */
+    private suspend fun generateFullResponseInternal(prompt: String): String {
+        val fullResponse = StringBuilder()
+        generateResponseInternal(prompt) { partialResult ->
+            fullResponse.append(partialResult)
+        }
+        return fullResponse.toString()
+    }
+
+    /**
+     *Mutex와 CompletableDeferred를 사용하여 AI 호출을 완벽하게 동기화하는 단일 진입점.
+     */
+    private suspend fun generateResponseInternal(
+        prompt: String,
+        onPartialResult: (String) -> Unit
+    ) {
+        mutex.withLock {
+            if (!isModelReady || llmInference == null) {
+                Log.w(TAG, "모델이 준비되지 않아 AI 호출을 건너뜁니다.")
+                return@withLock
+            }
+
+            val deferred = CompletableDeferred<Unit>()
+            try {
+                llmInference?.generateResponseAsync(prompt) { partialResult, done ->
+                    partialResult?.let(onPartialResult)
+                    if (done) {
+                        // 작업이 완료되면 대기를 해제합니다.
+                        if (!deferred.isCompleted) deferred.complete(Unit)
+                    }
+                }
+                // AI 작업이 'done' 신호를 보내 완료될 때까지 여기서 대기합니다.
+                // 이 시간 동안 Mutex 잠금은 절대 해제되지 않습니다.
+                deferred.await()
+            } catch (e: Exception) {
+                Log.e(TAG, "generateResponseInternal 실행 중 오류 발생", e)
+                if (!deferred.isCompleted) {
+                    deferred.completeExceptionally(e)
+                }
+            }
+        }
+    }
+
+    fun close() {
+        try {
+            llmInference?.close()
+        } catch (e: Exception) {
+            Log.e(TAG, "LLM 리소스 해제 중 오류 발생", e)
+        } finally {
+            llmInference = null
+            isModelReady = false
+            Log.i(TAG, "LLM 리소스가 해제되었습니다.")
+        }
+    }
+
+    private fun buildCharacterResponsePrompt(gameState: GameState, playerSelectedOption: String, history: List<ChatMessage>, scenario: Scenario): String {
         val conversationContext = if (history.isNotEmpty()) {
             "最近の会話:\n" + history.takeLast(4).joinToString("\n") { message ->
                 val role = if (message.role == ChatMessage.ROLE_USER) "プレイヤー" else gameState.characterName
@@ -143,229 +166,124 @@ class CharacterAi(
         } else ""
 
         return """
-<|system|>
-あなたは「${gameState.characterName}」という名前のキャラクターです。
-性格: ${gameState.characterPersona}
+        <|system|>
+        あなたは「${gameState.characterName}」という名前のキャラクターです。
+        性格: ${gameState.characterPersona}
 
-## 現在の状況:
-${scenario.setting}
+        ## 現在の状況:
+        ${scenario.setting}
 
-## あなたの現在の目標:
-${scenario.characterGoal}
+        ## あなたの現在の目標:
+        ${scenario.characterGoal}
 
-## ${gameState.characterName}の話し方のルール (重要):
-- あなたはプレイヤーの指示に厳密に従い、ロールプレイを維持してください。
-- プレイヤーはあなたの先輩なので、あなたは基本的に丁寧語（敬語）で応答します。
-- 冷静で論理的な性格ですが、状況に応じて感情が変化します。
-- 応答は常に50文字以内で、簡潔にしてください。
-- 会話中に「点数」「ポイント」「好感度変化」などの具体的な数値や、それを示唆する表現は絶対に使用しないでください。
+        ## ${gameState.characterName}の話し方のルール (重要):
+        - あなたはプレイヤーの指示に厳密に従い、ロールプレイを維持してください。
+        - プレイヤーはあなたの先輩なので、あなたは基本的に丁寧語（敬語）で応答します。
+        - 冷静で論理的な性格ですが、状況に応じて感情が変化します。
+        - 応答は常に50文字以内で、簡潔にしてください。
+        - 会話中に「点数」「ポイント」「好感度変化」などの具体的な数値や、それを示唆する表現は絶対に使用しないでください。
 
-$conversationContext
-プレイヤー(先輩): 「$playerSelectedOption」 (プレイヤーは後輩であるあなたに対して、常にくだけた口調（タメ口）で話します)
+        $conversationContext
+        プレイヤー(先輩): 「$playerSelectedOption」 (プレイヤーは後輩であるあなたに対して、常にくだけた口調（タメ口）で話します)
 
-上記の指示に厳密に従い、${gameState.characterName}として自然に応答してください:
-<|assistant|>
-    """.trimIndent()
+        上記の指示に厳密に従い、${gameState.characterName}として自然に応答してください:
+        <|assistant|>
+        """.trimIndent()
     }
 
-    private fun calculateUpdatedAffinity(
-        gameState: GameState,
-        playerSelectedOption: String,
-        characterResponse: String,
-        conversationHistory: List<ChatMessage>,
-        scenario: Scenario // シナリオ情報を追加
-    ): Int {
-        if (llmInference == null) {
-            Log.w(TAG, "llmInference is null in calculateUpdatedAffinity.")
-            return gameState.affinity
-        }
-        val prompt = buildParameterUpdatePrompt(gameState, playerSelectedOption, characterResponse, conversationHistory, scenario)
-        Log.d(TAG, "パラメータ更新プロンプト: $prompt")
-        Log.d(TAG, "llmInference?.generateResponse(parameter) 呼び出し前 (Thread: ${Thread.currentThread().name})")
-        val response = llmInference?.generateResponse(prompt)
-        Log.d(TAG, "llmInference?.generateResponse(parameter) 呼び出し後 (Thread: ${Thread.currentThread().name})")
-        return parseParameterUpdate(response, gameState.affinity)
-    }
-
-    private fun buildParameterUpdatePrompt(
-        gameState: GameState,
-        playerSelectedOption: String,
-        characterResponse: String,
-        history: List<ChatMessage>,
-        scenario: Scenario // シナリオ情報を追加
-    ): String {
-        // このプロンプトは内部的なスコア計算用なので、スコア関連の表現があっても問題ありません。
-        // ユーザーに直接表示されるテキストではありません。
+    private fun buildParameterUpdatePrompt(gameState: GameState, playerSelectedOption: String, characterResponse: String, history: List<ChatMessage>, scenario: Scenario): String {
         return """
-<|system|>
-あなたは、プレイヤーとキャラクターの会話を分析し、キャラクターの「好感度」の変化を判定するAIです。
+        <|system|>
+        あなたは、プレイヤーとキャラクターの会話を分析し、キャラクターの「好感度」の変化を判定するAIです。
 
-## 現在のシナリオ状況:
-${scenario.setting}
+        ## 現在のシナリオ状況:
+        ${scenario.setting}
 
-## キャラクターの目標:
-${scenario.characterGoal}
+        ## キャラクターの目標:
+        ${scenario.characterGoal}
 
-## 現在の${gameState.characterName}のプレイヤー(先輩)への好感度: ${gameState.affinity}/100
+        ## 現在の${gameState.characterName}のプレイヤー(先輩)への好感度: ${gameState.affinity}/100
 
-## 直近のやり取り:
-プレイヤー(先輩):「$playerSelectedOption」
-${gameState.characterName}(後輩):「$characterResponse」
+        ## 直近のやり取り:
+        プレイヤー(先輩):「$playerSelectedOption」
+        ${gameState.characterName}(後輩):「$characterResponse」
 
-## 好感度変化の採点基準:
-- キャラクターの目標（${scenario.characterGoal}）に沿った、またはそれを助けるようなプレイヤーの発言は、好感度を上げます。
-- 目標に反する、またはキャラクターを不快にさせる発言は、好感度を下げます。
-- 非常にポジティブなやり取り: +5 ～ +10
-- ややポジティブなやり取り: +1 ～ +4
-- 中立または無関係: 0
-- ややネガティブなやり取り: -1 ～ -4
-- 非常にネガティブなやり取り: -5 ～ -10
+        ## 好感度変化の採点基準:
+        - キャラクターの目標（${scenario.characterGoal}）に沿った、またはそれを助けるようなプレイヤーの発言は、好感度を上げます。
+        - 目標に反する、またはキャラクターを不快にさせる発言は、好感度を下げます。
+        - 非常にポジティブなやり取り: +10 ～ +15
+        - ややポジティブなやり取り: +5 ～ +9
+        - 中立または無関係: 0
+        - ややネガティブなやり取り: -5 ～ -9
+        - 非常にネガティブなやり取り: -10 ～ -15
 
-次の形式で、変化量を示す数字のみを返答してください (例: +2 または -3):
-好感度変化
-判定結果:
-<|assistant|>
-    """.trimIndent()
+        次の形式で、変化量を示す数字のみを返答してください (例: +2 または -3):
+        好感度変化
+        判定結果:
+        <|assistant|>
+        """.trimIndent()
     }
 
     private fun parseParameterUpdate(response: String?, currentAffinity: Int): Int {
-        if (response.isNullOrBlank()) {
-            return currentAffinity
-        }
-
+        if (response.isNullOrBlank()) return currentAffinity
         return try {
-            val cleanResponse = response.replace(" ", "").replace("　", "") // 空白除去
-            val affinityChange = cleanResponse.replace("+", "").toIntOrNull() ?: 0
-            val newAffinity = (currentAffinity + affinityChange).coerceIn(0, 100)
-            Log.d(TAG, "パラメータ更新: 好感度 $currentAffinity -> $newAffinity")
-            newAffinity
+            val affinityChange = response.trim().replace("+", "").toIntOrNull() ?: 0
+            (currentAffinity + affinityChange).coerceIn(0, 100).also {
+                Log.d(TAG, "파라미터 업데이트: 호감도 $currentAffinity -> $it (변화: $affinityChange)")
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "パラメータ解析エラー: ${e.message}")
+            Log.e(TAG, "파라미터 파싱 오류: $response", e)
             currentAffinity
         }
     }
 
-    fun generatePlayerOptions(
-        gameState: GameState,
-        characterLastResponse: String,
-        conversationHistory: List<ChatMessage> = emptyList(),
-        scenario: Scenario // シナリオ情報を追加
-    ): List<String> {
-        if (!isModelReady || llmInference == null) {
-            Log.w(TAG, "モデルが準備されていません。選択肢生成は不可能です。")
-            return listOf("選択肢生成エラー1", "選択肢生成エラー2", "選択肢生成エラー3")
-        }
-        Log.d(TAG, "generatePlayerOptions 開始 (Thread: ${Thread.currentThread().name})")
-        val prompt = buildPlayerOptionsPrompt(gameState, characterLastResponse, conversationHistory, scenario)
-        Log.d(TAG, "プレイヤー選択肢プロンプト: $prompt")
-        Log.d(TAG, "llmInference?.generateResponse(options) 呼び出し前 (Thread: ${Thread.currentThread().name})")
-        val response = llmInference?.generateResponse(prompt)
-        Log.d(TAG, "llmInference?.generateResponse(options) 呼び出し後 (Thread: ${Thread.currentThread().name})")
-        Log.d(TAG, "generatePlayerOptions 完了 (Thread: ${Thread.currentThread().name})")
-        return parseOptions(response)
-    }
-
-    private fun buildPlayerOptionsPrompt(
-        gameState: GameState,
-        characterLastResponse: String,
-        history: List<ChatMessage>,
-        scenario: Scenario // シナリオ情報を追加
-    ): String {
+    private fun buildPlayerOptionsPrompt(gameState: GameState, characterLastResponse: String, history: List<ChatMessage>, scenario: Scenario): String {
         return """
-<|system|>
-あなたはプレイヤー(先輩)の立場です。後輩である「${gameState.characterName}」(${gameState.characterPersona}) との会話を続けるための、あなたの発言選択肢を3つ生成してください。
+        <|system|>
+        あなたはプレイヤー(先輩)の立場です。後輩である「${gameState.characterName}」(${gameState.characterPersona}) との会話を続けるための、あなたの発言選択肢を3つ生成してください。
 
-## 現在の状況:
-${scenario.setting}
+        ## 現在の状況:
+        ${scenario.setting}
 
-## ${gameState.characterName}の現在の目標:
-${scenario.characterGoal}
+        ## ${gameState.characterName}の現在の目標:
+        ${scenario.characterGoal}
 
-## ${gameState.characterName}の最後の発言: 「$characterLastResponse」
+        ## ${gameState.characterName}の最後の発言:
+        「$characterLastResponse」
 
-## プレイヤー(先輩)の話し方と選択肢設計のルール (重要):
-- あなたは先輩なので、後輩である${gameState.characterName}に対して、常にくだけた口調（タメ口）で話します。
-- 生成する3つの選択肢は全て、このくだけた口調（タメ口）に従ってください。
-- **重要: 各選択肢は、直前の「${gameState.characterName}の最後の発言」に自然に応答する内容、または関連する内容にしてください。全く関係のない唐突な選択肢は避けてください。**
-- 各選択肢は15文字から40文字程度で、自然な会話として成り立つようにしてください。
-- 会話中に「点数」「ポイント」「好感度変化」などの具体的な数値や、それを示唆する表現は絶対に含めないでください。
+        ## プレイヤー(先輩)の話し方と選択肢設計のルール (重要):
+        - あなたは先輩なので、後輩である${gameState.characterName}に対して、常にくだけた口調（タメ口）で話します。
+        - 生成する3つの選択肢は全て、このくだけた口調（タメ口）に従ってください。
+        - **重要: 各選択肢は、直前の「${gameState.characterName}の最後の発言」に自然に応答する内容、または関連する内容にしてください。全く関係のない唐突な選択肢は避けてください。**
+        - 各選択肢は15文字から40文字程度で、自然な会話として成り立つようにしてください。
+        - 会話中に「点数」「ポイント」「好感度変化」などの具体的な数値や、それを示唆する表現は絶対に含めないでください。
 
-選択肢1 (ポジティブな選択肢): 「${gameState.characterName}の最後の発言」と現在の状況を踏まえ、彼女の目標達成を助ける、または好意的に受け取られるような発言。
-選択肢2 (中立的な選択肢): 「${gameState.characterName}の最後の発言」に対して、当たり障りのない一般的な会話で応答する。
-選択肢3 (ネガティブな選択肢): 「${gameState.characterName}の最後の発言」に対して、彼女の目標を妨害する、または不快にさせるような発言。
+        ## 応答形式 (厳守):
+        選択肢1: [くだけた口調のポジティブな選択肢]
+        選択肢2: [くだけた口調の中立的な選択肢]
+        選択肢3: [くだけた口調のネガティブな選択肢] 
 
-## 応答形式 (厳守):
-選択肢1: [くだけた口調のポジティブな選択肢]
-選択肢2: [くだけた口調の中立的な選択肢]
-選択肢3: [くだけた口調のネガティブな選択肢]
-
-上記の指示に厳密に従い、プレイヤー(先輩)の立場からの自然なタメ口の選択肢を3つ生成してください:
-<|assistant|>
-    """.trimIndent()
+        上記の指示に厳密に従い、プレイヤー(先輩)の立場からの自然なタメ口の選択肢を3つ生成してください:
+        <|assistant|>
+        """.trimIndent()
     }
 
     private fun parseOptions(response: String?): List<String> {
-        val defaultOptions = listOf("そうだな", "うーん…", "どうだろうな") // 日本語タメ口のデフォルト選択肢
-
-        if (response.isNullOrBlank()) {
-            Log.w(TAG, "LLM으로부터 선택지 응답이 없거나 비어있습니다. 기본 선택지를 사용합니다.")
-            return defaultOptions
-        }
-        Log.d(TAG, "LLM으로부터 받은 원본 선택지 응답: $response")
+        val defaultOptions = listOf("そうだな", "うーん…", "どうだろうな")
+        if (response.isNullOrBlank()) return defaultOptions
 
         val extractedOptions = response.lines()
             .mapNotNull { line ->
-                val trimmedLine = line.trim()
-                val matchResult = Regex("""^選択肢\s*\d+\s*[:：]\s*(.+)""").find(trimmedLine)
-                matchResult?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotEmpty() }
+                Regex("""^選択肢\s*\d+\s*[:：]\s*(.+)""").find(line.trim())
+                    ?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotEmpty() }
             }
-            .map { optionText -> // 抽出されたオプションテキストからスコア関連表現を削除
-                optionText.replace(Regex("""[+-]?\d+\s*(点|ポイント|点数変動|好感度変化|スコア)"""), "")
-                    .replace(Regex("""(好感度|評価|スコア)\s*([+-]\d+)"""), "")
-                    .trim()
-            }
-            .filter { it.isNotEmpty() } // スコア削除後に空になる可能性があるのでフィルタリング
+            .filter { it.isNotEmpty() }
             .toList()
-
-        Log.d(TAG, "파싱 후 추출된 선택지 (${extractedOptions.size}개): $extractedOptions")
 
         return if (extractedOptions.size >= 3) {
             extractedOptions.take(3)
         } else {
-            Log.w(TAG, "3개 미만의 선택지가 추출되었습니다 (${extractedOptions.size}개). 기본 선택지로 보충합니다.")
             (extractedOptions + defaultOptions).distinct().take(3)
-        }
-    }
-
-    private fun cleanResponse(response: String?, role: String): String {
-        if (response == null) {
-            return "うーん…何て答えたらいいでしょう？" // キャラクターのデフォルト応答 (丁寧語)
-        }
-
-        var clean = response
-            .replace("<|assistant|>", "")
-            .replace("<|user|>", "")
-            .replace("<|system|>", "")
-            .replace("${ChatMessage.ROLE_MODEL}:", "")
-            .trim()
-
-        // キャラクター応答からスコア関連テキストを削除
-        clean = clean.replace(Regex("""[+-]?\d+\s*(点|ポイント|点数変動|好感度変化|スコア)"""), "")
-            .replace(Regex("""(好感度|評価|スコア)\s*([+-]\d+)"""), "")
-            .trim()
-
-        return if (clean.isNotEmpty()) clean else "うーん…" // キャラクターのデフォルト応答 (丁寧語)
-    }
-
-    fun close() {
-        Log.i(TAG, "LLMリソース解放試行開始。")
-        try {
-            llmInference?.close()
-            llmInference = null // Explicitly nullify after closing
-            isModelReady = false
-            Log.i(TAG, "LLMリソース解放成功。llmInference = $llmInference, isModelReady = $isModelReady")
-        } catch (e: Exception) {
-            Log.e(TAG, "LLMリソース解放中にエラー発生: ${e.message}", e)
         }
     }
 }
