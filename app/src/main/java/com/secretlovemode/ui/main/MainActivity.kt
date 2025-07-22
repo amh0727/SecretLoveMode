@@ -1,9 +1,10 @@
-package com.secretlovemode
+package com.secretlovemode.ui.main
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -11,14 +12,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.secretlovemode.data.model.Character
+import com.secretlovemode.MyApplication
+import com.secretlovemode.data.repository.PromptManager
+import com.secretlovemode.R
+import com.secretlovemode.ui.main.SlmViewModel
+import com.secretlovemode.ui.game.GameActivity
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
-import android.util.Log
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import java.io.IOException
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,17 +49,8 @@ class MainActivity : AppCompatActivity() {
             id = "kaoru",
             characterName = "かおる",
             characterPersona = "情報系のツンデレ修士",
-            modelFileName = "gemma-3n-E2B-it-int4.task",
+            modelFileName = "gemma-3n-E2B-it-int4.task", // gemma-3n-E2B-it-int4 Gemma3-1B-it
             scenarioFileName = "scenarios_kaoru.json"
-        )
-    }
-    private val secretary by lazy {
-        Character(
-            id = "secretary",
-            characterName = "秘書",
-            characterPersona = "完璧主義者の秘書さん",
-            modelFileName = "gemma-3n-E2B-it-int4.task",
-            scenarioFileName = "scenarios_secretary.json"
         )
     }
 
@@ -96,7 +91,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         btnSelectKaoru.setOnClickListener { selectCharacterAndLoadModel(kaoru) }
-        btnSelectSecretary.setOnClickListener { selectCharacterAndLoadModel(secretary) }
         btnStartGame.setOnClickListener { startGame() }
 
         // 모델 선택 버튼 클릭 시 파일 선택 창을 띄웁니다.

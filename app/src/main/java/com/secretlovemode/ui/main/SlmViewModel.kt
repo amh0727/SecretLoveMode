@@ -1,14 +1,16 @@
-package com.secretlovemode
+package com.secretlovemode.ui.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.secretlovemode.domain.CharacterAi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
+
 
 class SlmViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -73,6 +75,8 @@ class SlmViewModel(application: Application) : AndroidViewModel(application) {
      */
     override fun onCleared() {
         super.onCleared()
+        Log.d("SlmViewModel", "ViewModel이 소멸되어 AI 리소스를 해제합니다.")
         characterAi?.close()
+        characterAi = null
     }
 }

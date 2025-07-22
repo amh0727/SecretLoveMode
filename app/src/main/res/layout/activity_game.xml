@@ -5,7 +5,7 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    android:background="@color/background_light"
-                                                   tools:context=".GameActivity">
+                                                   tools:context=".ui.game.GameActivity">
 
     <!-- 캐릭터 이름 -->
     <TextView
@@ -46,12 +46,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvCharacterName"
-                tools:text="好感度: 50 (好意的)" />
-
-
-
+                tools:text="好感度: 50 (好意的)"/>
 
     </LinearLayout>
+
 
     <!-- 캐릭터 이미지 -->
     <androidx.cardview.widget.CardView
@@ -74,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/character_image_pre"
+                android:src="@drawable/kaoru_default"
                 android:background="@color/conversation_background"/>
     </androidx.cardview.widget.CardView>
 
@@ -181,5 +179,39 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
     </LinearLayout>
+    <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible"/>
+    <LinearLayout
+            android:id="@+id/inputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible" tools:ignore="MissingConstraints"> <!-- 미리보기용 -->
+        <Button
+                android:id="@+id/btnSubmitInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="送信" tools:layout_editor_absoluteY="439dp" tools:layout_editor_absoluteX="363dp"
+                tools:ignore="MissingConstraints"/>
+        <EditText
+                android:id="@+id/etUserInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="入力欄" tools:layout_editor_absoluteY="440dp"
+                tools:layout_editor_absoluteX="-4dp" tools:ignore="MissingConstraints"/>
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

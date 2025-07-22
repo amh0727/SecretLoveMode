@@ -1,4 +1,4 @@
-package com.secretlovemode
+package com.secretlovemode.ui.game
 
 import android.content.Intent
 import android.graphics.Typeface
@@ -10,25 +10,53 @@ import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.secretlovemode.util.ButtonUtils
+import com.secretlovemode.data.model.Character
+import com.secretlovemode.domain.CharacterAi
+import com.secretlovemode.data.model.CharacterResponse
+import com.secretlovemode.data.model.ChatMessage
+import com.secretlovemode.data.model.GameState
+import com.secretlovemode.ui.main.MainActivity
+import com.secretlovemode.MyApplication
+import com.secretlovemode.ui.common.ParticleView
+import com.secretlovemode.R
+import com.secretlovemode.data.model.Scenario
+import com.secretlovemode.data.model.Season
+import com.secretlovemode.ui.main.SlmViewModel
+import com.secretlovemode.data.repository.ScenarioManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.text.iterator
 
 class GameActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "GameActivity"
-        private const val MAX_CONVERSATION_COUNT = 5 // 최대 대화 횟수
+        private const val MAX_CONVERSATION_COUNT = 10 // 최대 대화 횟수 (조금 늘렸습니다)
     }
+
+    private val loadingMessages = listOf(
+        "うーん、なんて言おうかな…",
+        "ちょっと考え中…",
+        "ふむふむ…",
+        "先輩、待っててくださいね…",
+        "えーっと…"
+    )
 
     private var characterAi: CharacterAi? = null
     private var currentScenario: Scenario? = null
@@ -46,6 +74,10 @@ class GameActivity : AppCompatActivity() {
     private lateinit var scrollViewConversation: ScrollView
     private lateinit var particleView: ParticleView
 
+    private lateinit var inputLayout: LinearLayout
+    private lateinit var etUserInput: EditText
+    private lateinit var btnSubmitInput: Button
+
     private lateinit var gameState: GameState
     private lateinit var slmViewModel: SlmViewModel
 
@@ -53,7 +85,7 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate() 호출")
         slmViewModel = (application as MyApplication).slmViewModel
-        delegate.localNightMode = androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
         setContentView(R.layout.activity_game)
 
         val character = intent.getSerializableExtra("SELECTED_CHARACTER") as? Character
@@ -68,12 +100,11 @@ class GameActivity : AppCompatActivity() {
             characterPersona = character.characterPersona
         )
         ScenarioManager.loadScenarios(this, character.scenarioFileName)
-
         initializeViews()
         setupUI()
 
         characterAi = slmViewModel.getCharacterAi()
-        if (characterAi == null) {
+        if (characterAi == null || !characterAi!!.isModelReady) {
             Toast.makeText(this, "モデルがまだ呼び出されていません。最初画面に戻ります。", Toast.LENGTH_LONG).show()
             finish()
             return
@@ -94,6 +125,9 @@ class GameActivity : AppCompatActivity() {
         ivCharacter = findViewById(R.id.ivCharacter)
         scrollViewConversation = findViewById(R.id.scrollViewConversation)
         particleView = findViewById(R.id.particleView)
+        inputLayout = findViewById(R.id.inputLayout)
+        etUserInput = findViewById(R.id.etUserInput)
+        btnSubmitInput = findViewById(R.id.btnSubmitInput)
     }
 
     private fun setupUI() {
@@ -103,53 +137,42 @@ class GameActivity : AppCompatActivity() {
         questionButton2.setOnClickListener { onPlayerOptionSelected(questionButton2.text.toString()) }
         questionButton3.setOnClickListener { onPlayerOptionSelected(questionButton3.text.toString()) }
         btnConfess.setOnClickListener { onConfessButtonClicked() }
+        btnSubmitInput.setOnClickListener { onUserInputSubmit() }
     }
 
     private fun startGame() {
         Log.d(TAG, "startGame() 호출")
-        if (characterAi == null || !characterAi!!.isModelReady) {
-            Log.w(TAG, "startGame() 호출 시, 모델이 준비되지 않았습니다.")
-            return
-        }
-
         val initialScenarioId = ScenarioManager.checkAndTriggerNextScenario(gameState)
         currentScenario = ScenarioManager.getScenario(initialScenarioId)
         if (currentScenario == null) {
-            Log.e(TAG, "シナリオ更新に失敗しました")
-            showToastWithAnimation("ゲーム開始に失敗しました")
+            Log.e(TAG, "초기 시나리오 로딩 실패")
+            showToastWithAnimation("게임 시작에 실패했습니다")
             disableAllOptions()
             return
         }
         gameState = gameState.copy(currentScenarioId = initialScenarioId)
 
         appendSystemMessage("[状況]\n${currentScenario!!.setting}")
+        updateCharacterImage(currentScenario)
+        checkAndApplySeasonChange()
         handleInitialTurn()
     }
 
     private fun onPlayerOptionSelected(selectedOptionText: String) {
-        // 1. AI가 준비되었는지 안전하게 확인합니다.
         if (characterAi == null || !characterAi!!.isModelReady) {
             showToastWithAnimation("AIがまだ準備できていません")
             return
         }
-
-        // 2. 어떤 선택지를 눌렀는지 로그를 남깁니다. (디버깅에 유용)
         Log.d(TAG, "選択: $selectedOptionText")
-
-        // 3. 플레이어의 선택을 대화창에 표시합니다.
         appendPlayerMessage(selectedOptionText)
-
-        // 4. AI에게 다음 턴 처리를 요청하는 핵심 함수를 호출합니다.
+        // [수정] 로딩 메시지 없이 바로 스트리밍 함수 호출
         handlePlayerAction(selectedOptionText)
     }
 
-    /**
-     *  게임 시작 턴을 처리하는 함수. AI를 한 번만 호출합니다.
-     */
     private fun handleInitialTurn() {
         val scenarioForResponse = currentScenario ?: return
         disableAllOptions()
-        showLoadingMessage("${gameState.characterName}が考えています... ")
+        showLoadingMessage("${gameState.characterName}: ${loadingMessages.random()} ")
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -157,14 +180,14 @@ class GameActivity : AppCompatActivity() {
                     gameState = gameState,
                     scenario = scenarioForResponse
                 )
-
-                // AI 작업이 모두 끝난 후 UI 업데이트
                 withContext(Dispatchers.Main) {
-                    // 1. 받아온 전체 응답을 스트리밍 효과와 함께 표시
                     displayFullResponse(initialTurnResult.fullInitialResponse)
-                    conversationHistory.add(ChatMessage(ChatMessage.ROLE_MODEL, initialTurnResult.fullInitialResponse))
-
-                    // 2. 첫 선택지 표시
+                    conversationHistory.add(
+                        ChatMessage(
+                            ChatMessage.Companion.ROLE_MODEL,
+                            initialTurnResult.fullInitialResponse.spoken_response
+                        )
+                    )
                     presentPlayerChoices(initialTurnResult.firstPlayerOptions)
                 }
             } catch (e: Exception) {
@@ -176,113 +199,159 @@ class GameActivity : AppCompatActivity() {
             }
         }
     }
-    /**
-     * 완성된 텍스트를 받아와 한 글자씩 보여주며 스트리밍 효과를 내는 함수
-     * @param fullText AI가 생성한 전체 응답 문자열
-     */
-    private suspend fun displayFullResponse(fullText: String) {
-        // 1. "생각 중..." 메시지를 지웁니다.
-        removeLoadingMessage()
-        // 2. 캐릭터 이름과 콜론을 추가합니다.
-        tvConversation.append("\n${gameState.characterName}: ")
 
-        // 3. 한 글자씩 타이핑 효과를 주며 텍스트를 추가합니다.
-        for (char in fullText) {
+    private suspend fun displayFullResponse(characterResponse: CharacterResponse) {
+        removeLoadingMessage()
+        if (characterResponse.inner_monologue.isNotBlank()) {
+            val styledInnerMonologue = SpannableString("\n（${characterResponse.inner_monologue}）\n")
+            styledInnerMonologue.setSpan(StyleSpan(Typeface.ITALIC), 0, styledInnerMonologue.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            styledInnerMonologue.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.text_secondary)), 0, styledInnerMonologue.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            tvConversation.append(styledInnerMonologue)
+            scrollToBottom()
+            delay(1500)
+        }
+        tvConversation.append("\n${gameState.characterName}: ")
+        for (char in characterResponse.spoken_response) {
             tvConversation.append(char.toString())
             scrollToBottom()
-            delay(50) // 글자 사이의 딜레이 (0.05초). 이 값을 조절하여 타이핑 속도를 바꿀 수 있습니다.
+            delay(100)
         }
-
-        // 4. 응답이 모두 표시된 후, 다음 대화를 위해 줄바꿈을 추가합니다.
         tvConversation.append("\n\n")
         scrollToBottom()
     }
 
     /**
-     * [핵심 수정] 플레이어의 행동을 처리하는 함수. AI를 한 번만 호출합니다.
+     * [핵심 수정] 스트리밍을 지원하는 새로운 handlePlayerAction 함수
      */
     private fun handlePlayerAction(playerAction: String) {
         val scenarioForResponse = currentScenario ?: return
         disableAllOptions()
-        showLoadingMessage("${gameState.characterName}が考えています... ")
-        conversationHistory.add(ChatMessage(ChatMessage.ROLE_USER, playerAction))
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val turnResult = characterAi!!.processPlayerTurn(
-                    gameState = gameState,
-                    playerSelectedOption = playerAction,
-                    conversationHistory = conversationHistory,
-                    scenario = scenarioForResponse
-                )
+        // 스트리밍 UI 준비
+        tvConversation.append("\n${gameState.characterName}: ")
+        val fullSpokenResponse = StringBuilder()
 
-                withContext(Dispatchers.Main) {
-                    displayFullResponse(turnResult.fullCharacterResponse)
-                    conversationHistory.add(ChatMessage(ChatMessage.ROLE_MODEL, turnResult.fullCharacterResponse))
-                    processGameStateUpdate(turnResult.updatedAffinity, false)
-
-                    if (gameState.affinity > 0 && gameState.conversationCount < MAX_CONVERSATION_COUNT) {
-                        presentPlayerChoices(turnResult.nextPlayerOptions)
-                    } else {
-                        if (gameState.affinity > 0) {
-                            appendSystemMessage("会話が終わりました！")
+        lifecycleScope.launch { // UI 업데이트를 위해 메인 스레드에서 시작
+            characterAi!!.processPlayerTurnStream(
+                gameState = gameState,
+                playerSelectedOption = playerAction,
+                conversationHistory = conversationHistory,
+                scenario = scenarioForResponse
+            )
+                .onStart {
+                    // 스트리밍 시작 시점에 플레이어의 말을 히스토리에 추가
+                    conversationHistory.add(ChatMessage(ChatMessage.Companion.ROLE_USER, playerAction))
+                }
+                .flowOn(Dispatchers.IO) // AI 작업은 IO 스레드에서 실행
+                .collect { event ->
+                    // collect 블록은 launch의 컨텍스트(메인 스레드)에서 실행됨
+                    when (event) {
+                        is CharacterAi.StreamEvent.TextChunk -> {
+                            // 텍스트 조각이 올 때마다 즉시 UI에 추가
+                            tvConversation.append(event.text)
+                            fullSpokenResponse.append(event.text)
+                            scrollToBottom()
                         }
-                        disableAllOptions()
+                        is CharacterAi.StreamEvent.TurnComplete -> {
+                            // 스트리밍이 끝나고 최종 데이터가 도착
+                            val payload = event.payload
+                            val finalResponse = fullSpokenResponse.toString().trim()
+                            conversationHistory.add(ChatMessage(ChatMessage.Companion.ROLE_MODEL, finalResponse))
+
+                            // 속마음 표시
+                            if (payload.inner_monologue.isNotBlank()) {
+                                val styledInnerMonologue = SpannableString("\n（${payload.inner_monologue}）\n")
+                                styledInnerMonologue.setSpan(StyleSpan(Typeface.ITALIC), 0, styledInnerMonologue.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                styledInnerMonologue.setSpan(
+                                    ForegroundColorSpan(
+                                        ContextCompat.getColor(
+                                            this@GameActivity,
+                                            R.color.text_secondary
+                                        )
+                                    ), 0, styledInnerMonologue.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                tvConversation.append(styledInnerMonologue)
+                                scrollToBottom()
+                                delay(1500) // 속마음 표시 후 잠시 대기
+                            }
+                            tvConversation.append("\n\n")
+
+                            // 게임 상태 업데이트
+                            val newAffinity = (gameState.affinity + payload.affinity_change).coerceIn(0, 100)
+                            processGameStateUpdate(newAffinity, false)
+
+                            // 다음 선택지 표시 또는 다른 로직 처리
+                            if (currentScenario?.requiresUserInput == true) {
+                                showUserInputView()
+                            } else if (gameState.affinity > 0 && gameState.conversationCount < MAX_CONVERSATION_COUNT) {
+                                presentPlayerChoices(payload.player_options)
+                            } else {
+                                if (gameState.affinity > 0) {
+                                    appendSystemMessage("会話が終わりました！")
+                                }
+                                disableAllOptions()
+                            }
+                        }
+                        is CharacterAi.StreamEvent.Error -> {
+                            Toast.makeText(this@GameActivity, event.message, Toast.LENGTH_LONG).show()
+                            presentPlayerChoices(listOf("うん", "いいえ", "よくわからない")) // 에러 시 기본 선택지
+                        }
                     }
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "턴 처리 중 오류 발생", e)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@GameActivity, "エラーが発生しました: ${e.message}", Toast.LENGTH_LONG).show()
-                    presentPlayerChoices(listOf("うん", "いいえ", "よくわからない"))
-                }
-            }
         }
     }
 
+    private fun showUserInputView() {
+        disableAllOptions()
+        questionButton1.visibility = View.GONE
+        questionButton2.visibility = View.GONE
+        questionButton3.visibility = View.GONE
+        appendSystemMessage("春が終わります。彼女に何か伝えたいことはありませんか？")
+        inputLayout.visibility = View.VISIBLE
+        etUserInput.requestFocus()
+    }
 
+    private fun onUserInputSubmit() {
+        val userInput = etUserInput.text.toString().trim()
+        if (userInput.isEmpty()) {
+            Toast.makeText(this, "気持ちを書いてください。", Toast.LENGTH_SHORT).show()
+            return
+        }
+        gameState = gameState.copy(confessionKeyword = userInput)
+        Log.d(TAG, "사용자 입력 저장: $userInput")
+        inputLayout.visibility = View.GONE
+        appendSystemMessage("あなたの心を伝えました")
+        updateConfessButtonVisibility()
+    }
 
-
-
-    /**
-     * 게임 상태 업데이트 로직만 따로 분리
-     */
     private fun processGameStateUpdate(newAffinity: Int, isInitial: Boolean) {
         val previousAffinity = gameState.affinity
         val previousScenarioId = gameState.currentScenarioId
 
-        // 1. 게임 상태 업데이트
         gameState = gameState.copy(
             affinity = newAffinity,
             conversationCount = if (isInitial) gameState.conversationCount else gameState.conversationCount + 1,
-            responsesInSeason = gameState.responsesInSeason + 1
+            responsesInSeason = if (isInitial) gameState.responsesInSeason else gameState.responsesInSeason + 1
         )
 
-        // 2. 계절 및 시나리오 변경 확인
         checkAndApplySeasonChange()
         checkAndApplyScenarioChange(previousScenarioId)
 
-        // 3. 호감도 변화 표시
         val affinityChange = newAffinity - previousAffinity
-        if (affinityChange != 0) {
+        if (affinityChange != 0 && !isInitial) {
             showAffinityChange(affinityChange)
             if (affinityChange > 0) particleView.startAnimation(ParticleView.ParticleType.HEART)
             else particleView.startAnimation(ParticleView.ParticleType.SAD)
         }
         updateStatusDisplay()
 
-        // 4. 게임 오버 확인
         if (gameState.affinity <= 0) {
             showGameOverDialog("${gameState.characterName}との関係は終わってしまいました...")
         }
     }
 
-    /**
-     * 선택지 생성 로직을 제거하고, 받은 선택지를 표시하는 역할만 하도록 변경
-     */
     private fun presentPlayerChoices(options: List<String>) {
         removeLoadingMessage()
-        if (options.size == 3 && !options.any { it.contains("エラー") }) {
+        if (options.size >= 3 && !options.any { it.contains("エラー") }) {
             updateButtonsWithOptions(options)
             appendSystemMessage("どうしよう")
             enableChoiceButtons()
@@ -300,15 +369,15 @@ class GameActivity : AppCompatActivity() {
 
     private fun updateButtonsWithOptions(options: List<String>) {
         val buttons = listOf(questionButton1, questionButton2, questionButton3)
-        options.forEachIndexed { index, option ->
-            if (index < buttons.size) {
-                buttons[index].text = option
-                ButtonUtils.adjustButtonForText(buttons[index], option)
-            }
+        buttons.forEach { it.visibility = View.GONE } // 일단 모든 버튼 숨기기
+        options.take(3).forEachIndexed { index, option ->
+            buttons[index].text = option
+            buttons[index].visibility = View.VISIBLE
+            ButtonUtils.adjustButtonForText(buttons[index], option)
         }
         lifecycleScope.launch {
             delay(100)
-            ButtonUtils.balanceButtonSizes(buttons)
+            ButtonUtils.balanceButtonSizes(buttons.filter { it.visibility == View.VISIBLE })
         }
     }
 
@@ -334,15 +403,10 @@ class GameActivity : AppCompatActivity() {
 
     private fun removeLoadingMessage() {
         val currentText = tvConversation.text.toString()
-        val lines = currentText.lines().toMutableList()
-        val loadingLineIndex = lines.indexOfLast { it.contains("生成中") || it.contains("考え中") }
-        if (loadingLineIndex != -1) {
-            lines.removeAt(loadingLineIndex)
-            // 로딩 메시지 바로 아래의 빈 줄도 함께 제거
-            if (loadingLineIndex < lines.size && lines[loadingLineIndex].isBlank()) {
-                lines.removeAt(loadingLineIndex)
-            }
-            tvConversation.text = lines.joinToString("\n")
+        val loadingLine = loadingMessages.find { currentText.contains(it) }
+        if (loadingLine != null) {
+            val newText = currentText.replaceFirst("${gameState.characterName}: $loadingLine \n\n", "")
+            tvConversation.text = newText
         }
     }
 
@@ -352,9 +416,16 @@ class GameActivity : AppCompatActivity() {
             val nextSeason = Season.values()[(currentSeasonIndex + 1) % Season.values().size]
             gameState = gameState.copy(
                 currentSeason = nextSeason,
-                responsesInSeason = 0
+                responsesInSeason = 0,
+                currentScenarioId = "CHAPTER_${currentSeasonIndex + 2}_START" // 다음 챕터로 강제 이동
             )
             appendSystemMessage("[季節変化] ${nextSeason.name}になりました。")
+        }
+
+        when (gameState.currentSeason) {
+            Season.SPRING -> particleView.startAnimation(ParticleView.ParticleType.CHERRY_BLOSSOMS)
+            Season.WINTER -> particleView.startAnimation(ParticleView.ParticleType.SNOW)
+            else -> particleView.stopAnimation()
         }
     }
 
@@ -365,6 +436,7 @@ class GameActivity : AppCompatActivity() {
             if (currentScenario != null) {
                 gameState = gameState.copy(currentScenarioId = nextScenarioId)
                 appendSystemMessage("[状況変化]\n${currentScenario!!.setting}")
+                updateCharacterImage(currentScenario)
             } else {
                 Log.e(TAG, "시나리오 변경 실패: ID '$nextScenarioId'를 찾을 수 없습니다.")
             }
@@ -379,12 +451,32 @@ class GameActivity : AppCompatActivity() {
         showToastWithAnimation(toastText)
     }
 
+    private fun updateCharacterImage(scenario: Scenario?) {
+        scenario?.imageName?.let { imageName ->
+            val resourceId = resources.getIdentifier(imageName, "drawable", packageName)
+            if (resourceId != 0) {
+                ivCharacter.setImageResource(resourceId)
+            } else {
+                Log.w(TAG, "Drawable 리소스를 찾을 수 없습니다: $imageName")
+                ivCharacter.setImageResource(R.drawable.kaoru_default)
+            }
+        }
+    }
+
     private fun onConfessButtonClicked() {
+        val keyword = gameState.confessionKeyword
+        val message = if (keyword != null) {
+            "'${keyword}' と伝えた気持ちを込めて, ${gameState.characterName}に告白しますか？"
+        } else {
+            "${gameState.characterName}に告白しますか？"
+        }
+
         AlertDialog.Builder(this)
             .setTitle("告白")
-            .setMessage("${gameState.characterName}に告白しますか？")
+            .setMessage(message) // [수정] 중복된 setMessage 호출 제거
             .setPositiveButton("はい") { _, _ ->
-                val ending = if (gameState.affinity >= 80) "ハッピーアンド！" else "サードアンド"
+                // [수정] 오타 수정
+                val ending = if (gameState.affinity >= 80) "ハッピーエンド！" else "サッドエンド"
                 showGameOverDialog("告白結果: $ending")
             }
             .setNegativeButton("いいえ", null)
@@ -413,8 +505,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun showToastWithAnimation(message: CharSequence) {
-        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        toast.show()
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun enableChoiceButtons() {
@@ -435,10 +526,5 @@ class GameActivity : AppCompatActivity() {
 
     private fun updateConfessButtonVisibility() {
         btnConfess.visibility = if (gameState.affinity >= 80) View.VISIBLE else View.GONE
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy() 호출, 리소스 정리")
     }
 }

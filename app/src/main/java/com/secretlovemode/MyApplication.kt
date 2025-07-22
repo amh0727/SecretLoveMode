@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import com.secretlovemode.ui.main.SlmViewModel
 
 // [수정] ViewModelStoreOwner를 구현하여 표준 ViewModel 생명주기를 따르도록 합니다.
 class MyApplication : Application(), ViewModelStoreOwner {

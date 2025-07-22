@@ -1,120 +1,99 @@
 [
   {
-    "id": "CHAPTER_1_START",
-    "setting": "真夜中を過ぎた研究室。窓の外は暗く、モニターの音だけが響く。二人の間には気まずい沈黙が流れている。",
-    "characterGoal": "プレイヤーの存在を意識しつつ、あくまで仕事に集中しているふりをし、冷たく事務的な態度を保つ。",
+    "id": "EVENT_SPRING_FIRST_MEETING",
+    "season": "SPRING",
+    "setting": "研究室の窓の外では桜が満開となり、花びらがひらひらと舞っている。今日からこの研究室に配属された後輩の「かおる」が、緊張した面持ちであなたに挨拶をしに来た。",
+    "characterGoal": "初めて会う先輩のあなたに、可愛がってもらえるよう、少し背伸びしてでも明るく元気に振る舞おうとしている。内心はとても緊張している。",
     "trigger": {
       "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "0" }
-      ]
-    }
-  },
-  {
-    "id": "EVENT_COFFEE",
-    "setting": "プレイヤーがコーヒーを淹れて差し出すと、かおるは少し驚いた目でこちらを見ている。",
-    "characterGoal": "予想外の親切に少し戸惑うが、警戒心は解かずに「どうも」とだけ短く感謝を伝える。",
-    "trigger": {
-      "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "2" },
+        { "type": "CONVERSATION_GTE", "value": "0" },
         { "type": "CURRENT_SCENARIO_IS", "value": "CHAPTER_1_START" }
       ]
     }
   },
   {
-    "id": "EVENT_ERROR_LOG",
-    "setting": "かおるのモニターに、赤いエラーログが延々とスクロール表示される。彼女の表情が微かに硬直する。",
-    "characterGoal": "自分のミスを見せたくないため助けを断ろうとするが、どうにもならない状況に内心で葛藤する。",
+    "id": "EVENT_SPRING_AFFINITY_30",
+    "season": "SPRING",
+    "setting": "研究室で作業をしているあなたの隣に来て、「せんぱーい、これ、ちょっと教えてもらえませんか？」とあなたの手元を覗き込んでくる。",
+    "characterGoal": "もっとあなたと話すきっかけが欲しくて、勇気を出して質問してみる。少しでも長く隣にいたいと思っている。",
     "trigger": {
       "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "5" },
-        { "type": "AFFINITY_GTE", "value": "50" }
+        { "type": "AFFINITY_GTE", "value": "30" },
+        { "type": "CONVERSATION_GTE", "value": "5" }
       ]
     }
   },
   {
-    "id": "EVENT_FUTURE_TALK",
-    "setting": "なんとか急なトラブルは乗り越えたが、二人とも疲れ切っている。一息つきながら、ふと窓の外を見る。",
-    "characterGoal": "疲れからか普段よりも素直になり、研究の後の進路など、将来についての悩みをぽつりと漏らす。",
+    "id": "EVENT_SPRING_AFFINITY_60",
+    "season": "SPRING",
+    "setting": "二人きりの研究室で、かおるが「先輩、いつもお疲れ様です！コーヒー淹れたんですけど、一緒に休憩しませんか？」と、あなたの分のコーヒーも持って提案してくる。",
+    "characterGoal": "あなたともっと仲良くなりたい気持ちが溢れている。少しでも気の利く可愛い後輩だと思われたくて、精一杯のおもてなしをする。",
     "trigger": {
       "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "11" },
-        { "type": "AFFINITY_GTE", "value": "55" }
+        { "type": "AFFINITY_GTE", "value": "60" },
+        { "type": "CONVERSATION_GTE", "value": "8" }
       ]
     }
   },
   {
-    "id": "ENDING_C_BAD",
-    "setting": "結局、大きな成果もないまま夜が明けた。かおるは、もうあなたのことを見ていない。",
-    "characterGoal": "「お先に失礼します」と冷たい言葉だけを残し、あなたをいないもののように扱い、その場を立ち去る。",
+    "id": "EVENT_SUMMER_TRIP",
+    "season": "SUMMER",
+    "setting": "研究室のサマーセミナーで、少し離れた場所にある施設に来ている。普段とは違う環境に、かおるは少しそわそわしている様子だ。",
+    "characterGoal": "憧れの先輩であるあなたと旅行に来られて、内心とても浮かれている。でも、それを悟られまいと必死で平静を装っている。",
     "trigger": {
       "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_GTE", "value": "25" }
+        { "type": "CONVERSATION_GTE", "value": "3" },
+        { "type": "CURRENT_SCENARIO_IS", "value": "CHAPTER_2_START" }
       ]
     }
   },
   {
-    "id": "ENDING_B_NEUTRAL",
-    "setting": "全ての作業が終わったが、二人の距離は最初と変わらないままだ。もうすぐ始発が動く時間だ。",
-    "characterGoal": "「お疲れ様でした」という極めて事務的な挨拶だけを残し、そそくさと荷物をまとめて研究室を後にする。",
+    "id": "EVENT_SUMMER_WALK",
+    "season": "SUMMER",
+    "setting": "夕食後、涼しい夜風に当たりながら、あなたと二人で施設の周りを散歩している。かおるは少し照れたように、あなたの半歩後ろを歩いている。",
+    "characterGoal": "あなたと二人きりの時間に、幸せを感じている。この時間がずっと続けばいいのにと願いながら、勇気を出して隣に並んで歩こうか葛藤している。",
     "trigger": {
       "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_GTE", "value": "60" }
+        { "type": "AFFINITY_GTE", "value": "60" },
+        { "type": "CONVERSATION_GTE", "value": "4" },
+        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_SUMMER_TRIP" }
       ]
     }
   },
   {
-    "id": "ENDING_A_GOOD",
-    "setting": "いつの間にか、窓の外が白み始めている。気まずかった沈黙は、今ではもう不快ではない。",
-    "characterGoal": "小さな微笑みと共に、「おかげで、助かりました」と心からの感謝を伝え、未来への余韻を残す。",
+    "id": "EVENT_SUMMER_FIGHT",
+    "season": "SUMMER",
+    "setting": "慣れない環境での疲れからか、些細なことであなたと意見が食い違い、つい反抗的な態度をとってしまう。気まずい沈黙が流れる。",
+    "characterGoal": "大好きな先輩に、可愛くない態度をとってしまったと自己嫌悪に陥っている。すぐにでも謝りたいのに、素直になれず俯いている。",
     "trigger": {
       "conditions": [
-        { "type": "CONVERSATION_GTE", "value": "15" },
-        { "type": "AFFINITY_GTE", "value": "70" }
+        { "type": "AFFINITY_GTE", "value": "30" },
+        { "type": "CONVERSATION_GTE", "value": "4" },
+        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_SUMMER_TRIP" }
       ]
     }
   },
   {
-    "id": "EVENT_CONFESSION",
-    "setting": "意を決したあなたは、かおるの目を見て、まっすぐに気持ちを伝えようとしている。",
-    "characterGoal": "突然の告白に驚き、顔を赤らめながらも、あなたの言葉を真剣に聞こうとする。",
+    "id": "EVENT_AUTUMN_SCENE",
+    "season": "AUTUMN",
+    "setting": "研究室の周りの木々が色づき、かおるは窓辺で落ち葉を眺めている。「せんぱい、秋ですね」と、少し寂しそうに呟く。",
+    "characterGoal": "秋の感傷的な雰囲気に影響され、少しだけ素直になっている。あなたにもっと自分のことを知ってほしいと思っている。",
     "trigger": {
       "conditions": [
-        { "type": "PLAYER_ACTION", "value": "CONFESS" } 
+        { "type": "CONVERSATION_GTE", "value": "6" },
+        { "type": "CURRENT_SCENARIO_IS", "value": "CHAPTER_3_START" }
       ]
     }
   },
   {
-    "id": "ENDING_S_SUCCESS",
-    "setting": "あなたの言葉に、かおるは潤んだ目で見つめ返してくる。長い沈黙の後、彼女は小さく頷いた。",
-    "characterGoal": "「…私も、先輩のことが…」と言葉を詰まらせながらも、精一杯の勇気で気持ちを受け入れる。",
+    "id": "EVENT_WINTER_SCENE",
+    "season": "WINTER",
+    "setting": "窓の外では雪が降り積もり、研究室の空気もどこかひんやりとしている。かおるは「さ、寒いですね…」と言いながら、あなたのそばに少しだけ近寄ってくる。",
+    "characterGoal": "寒さを言い訳に、あなたに甘えたい気持ちでいっぱい。さりげなく隣に座って、温もりを感じたいと思っている。",
     "trigger": {
       "conditions": [
-        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_CONFESSION" },
-        { "type": "AFFINITY_GTE", "value": "90" }
-      ]
-    }
-  },
-  {
-    "id": "ENDING_A_PENDING",
-    "setting": "かおるは驚きと戸惑いが入り混じった表情で、視線をさまよわせている。",
-    "characterGoal": "「少し、考えさせてください」と、すぐに答えを出すことを避け、時間をもらおうとする。",
-    "trigger": {
-      "conditions": [
-        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_CONFESSION" },
-        { "type": "AFFINITY_GTE", "value": "70" }
-      ]
-    }
-  },
-  {
-    "id": "ENDING_F_REJECTED",
-    "setting": "あなたの告白を聞いたかおるは、悲しそうな、申し訳なさそうな顔で黙り込んでしまう。",
-    "characterGoal": "「ごめんなさい…。あなたの気持ちには、応えられません」と、はっきりと、しかし辛そうに断る。",
-    "trigger": {
-      "conditions": [
-        { "type": "CURRENT_SCENARIO_IS", "value": "EVENT_CONFESSION" },
-        { "type": "AFFINITY_GTE", "value": "65" }
+        { "type": "CONVERSATION_GTE", "value": "9" },
+        { "type": "CURRENT_SCENARIO_IS", "value": "CHAPTER_4_START" }
       ]
     }
   }

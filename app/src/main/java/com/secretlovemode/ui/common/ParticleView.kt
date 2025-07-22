@@ -1,4 +1,4 @@
-package com.secretlovemode
+package com.secretlovemode.ui.common
 
 import android.content.Context
 import android.graphics.Canvas
