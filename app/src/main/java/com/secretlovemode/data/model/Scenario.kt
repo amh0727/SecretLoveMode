@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Trigger(
-    val conditions: List<Condition> // 이 조건들을 모두 만족해야 트리거됨 (AND 조건)
+    val conditions: List<Condition> // All these conditions must be met to trigger (AND condition)
 )
 
 @Serializable

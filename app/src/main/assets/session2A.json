@@ -1,0 +1,77 @@
+{
+  "title": "旅行SNSアプリ提案！",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "みんなで旅行スポットを共有できるSNSアプリはどうかな？研究室のメンバーが行った場所の写真や感想を投稿して、みんなで情報交換できるの。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "わあ！それすごくいいアイデアです♪",
+      "images": "assets/images/megumi_lab_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "私、いつも旅行先で写真をたくさん撮るんですけど、みんなに見せる機会がなくて...これなら私の旅行経験も活かせそうです！",
+      "images": "assets/images/megumi_lab_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "やった！めぐみちゃんが本当に喜んでくれてる。これなら一緒に楽しく開発できそうだ。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "{{playerName}}先輩、さすがです！これなら研究室旅行でみんなに発表するのが楽しみになってきました♪",
+      "images": "assets/images/megumi_lab_expectant.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "それじゃあ、詳しい機能とか設計について話し合おうか。めぐみちゃんのアイデアも聞かせてよ。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "はい！一緒に頑張りましょう♪ あ、でも今日はもう遅いので、明日から本格的に始めませんか？",
+      "images": "assets/images/megumi_lab_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "こうして{{playerName}}とめぐみの共同開発プロジェクトが始まった。二人の距離は確実に縮まったようだ..."
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ところで{{playerName}}先輩...私、プログラミング初心者なんですけど、どこから始めればいいんでしょうか？",
+      "images": "assets/images/megumi_lab_questioning.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "プログラミング初心者のめぐみに何をアドバイスする？",
+      "options": [
+        {
+          "text": "Claude Codeに書かせればいいでしょ",
+          "affectionChange": 5,
+          "next": "3A"
+        },
+        {
+          "text": "要件をしっかり定義してやっていこう",
+          "affectionChange": 10,
+          "next": "3B"
+        },
+        {
+          "text": "まずは文法とかプログラミングを手書きで模写するところからだね",
+          "affectionChange": -20,
+          "next": "3C"
+        }
+      ]
+    }
+  ]
+}

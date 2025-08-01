@@ -16,15 +16,15 @@ class ParticleView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val particles = mutableListOf<Particle>()
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG) // 부드러운 모양을 위해 ANTI_ALIAS 플래그 추가
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG) // Add ANTI_ALIAS flag for smooth shapes
     private var isAnimating = false
     private var particleType: ParticleType = ParticleType.NONE
-    private var animationDuration = 2000L // 애니메이션 지속 시간 (2초)
+    private var animationDuration = 2000L // Animation duration (2 seconds)
     private var animationStartTime = 0L
 
     /**
-     * 1. ParticleType을 public으로 변경하여 GameActivity 같은 외부 클래스에서 접근할 수 있도록 합니다.
-     * 2. HEART와 SAD 타입을 추가합니다.
+     * 1. Make ParticleType public so it can be accessed from external classes like GameActivity.
+     * 2. Add HEART and SAD types.
      */
     enum class ParticleType {
         NONE, HEART, SAD, SNOW, LEAVES, CHERRY_BLOSSOMS
@@ -42,21 +42,21 @@ class ParticleView @JvmOverloads constructor(
     )
 
     /**
-     * 3. 외부에서 애니메이션을 시작할 수 있는 public 함수를 만듭니다.
-     *    GameActivity에서 이 함수를 호출하게 됩니다.
+     * 3. Create a public function to start animation from outside.
+     *    GameActivity will call this function.
      */
     fun startAnimation(type: ParticleType) {
-        // 애니메이션이 이미 실행 중이면 중복 실행 방지
+        // Prevent duplicate execution if animation is already running
         if (isAnimating) return
 
         this.particleType = type
-        particles.clear() // 이전 파티클 제거
+        particles.clear() // Remove previous particles
 
-        // 뷰의 크기가 정해졌을 때만 파티클 생성
+        // Generate particles only when view size is determined
         if (width > 0 && height > 0) {
             val particleCount = when (type) {
-                ParticleType.HEART, ParticleType.SAD -> 30 // 하트/슬픔은 개수를 조금 적게
-                else -> 50
+                ParticleType.HEART, ParticleType.SAD -> 60 // More particles for better effect
+                else -> 80
             }
             for (i in 0 until particleCount) {
                 addParticle()
@@ -64,7 +64,7 @@ class ParticleView @JvmOverloads constructor(
         }
         animationStartTime = System.currentTimeMillis()
         isAnimating = true
-        postInvalidateOnAnimation() // 애니메이션 시작
+        postInvalidateOnAnimation() // Start animation
     }
 
     fun stopAnimation() {
@@ -74,12 +74,21 @@ class ParticleView @JvmOverloads constructor(
     }
 
     private fun addParticle() {
-        // 파티클이 화면 아래에서 위로 올라가도록 시작 위치와 속도 조절
+        // Create particles across the screen width and various starting positions
         val x = Random.nextFloat() * width
-        val y = height + Random.nextFloat() * 100 // 화면 바로 아래에서 시작
-        val speedY = -(Random.nextFloat() * 3 + 2) // 위로 올라가는 속도
-        val speedX = Random.nextFloat() * 4 - 2 // 좌우로 흔들리는 속도
-        val size = Random.nextFloat() * 20 + 15 // 파티클 크기
+        val startFromTop = Random.nextBoolean()
+        val y = if (startFromTop) {
+            -Random.nextFloat() * 200 // Start above screen
+        } else {
+            height + Random.nextFloat() * 200 // Start below screen
+        }
+        val speedY = if (startFromTop) {
+            Random.nextFloat() * 4 + 2 // Downward speed
+        } else {
+            -(Random.nextFloat() * 4 + 2) // Upward speed
+        }
+        val speedX = Random.nextFloat() * 6 - 3 // More sideways movement
+        val size = Random.nextFloat() * 30 + 20 // Larger particles
         particles.add(Particle(x, y, speedY, speedX, size))
     }
 
@@ -88,7 +97,7 @@ class ParticleView @JvmOverloads constructor(
 
         if (!isAnimating) return
 
-        // 애니메이션 시간이 다 되면 종료
+        // End animation when time is up
         val elapsedTime = System.currentTimeMillis() - animationStartTime
         if (elapsedTime > animationDuration) {
             stopAnimation()
@@ -99,16 +108,18 @@ class ParticleView @JvmOverloads constructor(
         while (iterator.hasNext()) {
             val particle = iterator.next()
 
-            // 위치 업데이트
+            // Update position
             particle.y += particle.speedY
             particle.x += particle.speedX
             particle.rotation += particle.rotationSpeed
 
-            // 시간이 지나면서 서서히 투명해지도록 알파값 조절
+            // Adjust alpha to fade out gradually over time
             particle.alpha = (255 * (1f - elapsedTime.toFloat() / animationDuration)).toInt().coerceIn(0, 255)
 
-            // 화면 밖으로 나가거나 완전히 투명해지면 제거
-            if (particle.y < -particle.size || particle.alpha <= 0) {
+            // Remove if off screen or fully transparent
+            if (particle.y < -particle.size * 2 || particle.y > height + particle.size * 2 || 
+                particle.x < -particle.size * 2 || particle.x > width + particle.size * 2 || 
+                particle.alpha <= 0) {
                 iterator.remove()
                 continue
             }
@@ -118,17 +129,17 @@ class ParticleView @JvmOverloads constructor(
             canvas.translate(particle.x, particle.y)
             canvas.rotate(particle.rotation)
 
-            // 4. HEART와 SAD 타입에 대한 그리기 로직 추가
+            // 4. Add drawing logic for HEART and SAD types
             when (particleType) {
                 ParticleType.HEART -> {
-                    paint.color = Color.parseColor("#FF4081") // 핑크색
+                    paint.color = Color.parseColor("#FF4081") // Pink
                     drawHeart(canvas, particle.size)
                 }
                 ParticleType.SAD -> {
-                    paint.color = Color.parseColor("#536DFE") // 파란색
+                    paint.color = Color.parseColor("#536DFE") // Blue
                     drawTear(canvas, particle.size)
                 }
-                // 기존 파티클 효과들은 유지
+                // Existing particle effects are maintained
                 ParticleType.SNOW -> {
                     paint.color = Color.WHITE
                     canvas.drawCircle(0f, 0f, particle.size / 2, paint)
@@ -141,18 +152,18 @@ class ParticleView @JvmOverloads constructor(
                     paint.color = Color.parseColor("#FFB6C1")
                     canvas.drawOval(-particle.size / 2, -particle.size / 4, particle.size / 2, particle.size / 4, paint)
                 }
-                ParticleType.NONE -> { /* 아무것도 안 함 */ }
+                ParticleType.NONE -> { /* Do nothing */ }
             }
             canvas.restore()
         }
 
-        // 애니메이션이 진행 중이면 다음 프레임 요청
+        // Request next frame if animation is ongoing
         if (isAnimating) {
             postInvalidateOnAnimation()
         }
     }
 
-    // 하트 모양을 그리는 함수
+    // Function to draw a heart shape
     private fun drawHeart(canvas: Canvas, size: Float) {
         paint.style = Paint.Style.FILL
         val path = Path()
@@ -165,7 +176,7 @@ class ParticleView @JvmOverloads constructor(
         canvas.drawPath(path, paint)
     }
 
-    // 눈물(물방울) 모양을 그리는 함수
+    // Function to draw a tear (water drop) shape
     private fun drawTear(canvas: Canvas, size: Float) {
         paint.style = Paint.Style.FILL
         val path = Path()

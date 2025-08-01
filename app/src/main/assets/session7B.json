@@ -1,0 +1,117 @@
+{
+  "title": "めぐみの答え",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "結果は残酷だった。しかしそれ以上に冷静な自分がいる。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "あ...そうか。振られたんだな。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "ありがとう！正直に伝えてくれて．．．"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "でも．．．先輩はすごく尊敬してますし！その．．．",
+      "images": "assets/images/megumi_beach_flustered.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "重い沈黙が流れた時、大きな音が夜空に響いた。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "どーーーーーん!!!",
+      "images": "assets/images/fireworks_night.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "花火か．．．花火はいいな。上を見て何も喋らなくていいから気まずくない。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "二人は無言で花火を見上げていた。しかし、気がつくとめぐみはどこかに消えていた。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "そうか...振られたんだな。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "一人になった{{playerName}}が砂浜でぼんやりしていると、突如人影が現れた。"
+    },
+    {
+      "type": "message",
+      "speaker": "安本先生",
+      "text": "{{playerName}}君、こんなところで何をしているんですか？",
+      "images": "assets/images/yasumoto_beach_concerned.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "安本先生...実は、めぐみちゃんに告白したんですけど..."
+    },
+    {
+      "type": "message",
+      "speaker": "安本先生",
+      "text": "ああ、そういうことですか。で、結果は？",
+      "images": "assets/images/yasumoto_beach_understanding.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "振られました..."
+    },
+    {
+      "type": "message",
+      "speaker": "安本先生",
+      "text": "そうですか...でも{{playerName}}君、実はユビ研は研究室内恋愛禁止なんですよ。",
+      "images": "assets/images/yasumoto_beach_serious.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "え...そうなんですか？"
+    },
+    {
+      "type": "message",
+      "speaker": "安本先生",
+      "text": "危なかったですね。研究に集中するためのルールです。気持ちを切り替えて、研究に打ち込みましょう。",
+      "images": "assets/images/yasumoto_beach_encouraging.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "そうか．．．。何だか元気が出てきたぞ。"
+    },
+    {
+      "type": "message",
+      "speaker": "安本先生",
+      "text": "青春ですね。さあ、宿に戻りましょう。明日からまた研究を頑張りましょう。",
+      "images": "assets/images/yasumoto_beach_encouraging.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "こうして{{playerName}}の初恋は幕を閉じた。でも気持ちが晴れやかなのは、ここ、常滑と先生のおかげかもしれないな。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "GAME OVER"
+    }
+  ]
+}

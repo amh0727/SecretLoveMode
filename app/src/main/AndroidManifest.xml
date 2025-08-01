@@ -4,16 +4,16 @@
           package="com.secretlovemode">
 
     <application
-            android:name="com.secretlovemode.MyApplication"
-            android:allowBackup="true"
-            android:dataExtractionRules="@xml/data_extraction_rules"
-            android:fullBackupContent="@xml/backup_rules"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/Theme.M1gp"
-            tools:targetApi="31">
+        android:name="com.secretlovemode.MyApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.M1gp"
+        tools:targetApi="31">
         <activity
                 android:name="com.secretlovemode.ui.main.MainActivity"
                 android:exported="true">
@@ -24,11 +24,11 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="com.secretlovemode.ui.game.GameActivity"
-                android:exported="true"
-                android:configChanges="uiMode">
-            <!-- GameActivity에서 LAUNCHER 인텐트 필터 제거 -->
-        </activity>
+            android:name=".ui.game.GameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.game.FinalMessageActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

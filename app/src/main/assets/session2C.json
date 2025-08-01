@@ -1,0 +1,89 @@
+{
+  "title": "ロケットゲーム提案...？",
+  "backgroundImage": "assets/images/backgrounds/lab_room.jpg",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "ロケットを火星まで飛ばすゲームはどうかな？軌道計算とか、MATLABを使ったゲーム。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ロケット...ですか？",
+      "images": "assets/images/megumi_lab_confused.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "うーん...正直、ロケットにはあまり興味がなくて...それに「火星まで届ける」って何のためなんでしょう？",
+      "images": "assets/images/megumi_lab_disappointed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "あ...めぐみちゃんの反応が微妙だ。確かに旅行好きの彼女には宇宙開発は遠い話かも..."
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "それって同期の方がやってませんでしたっけ？あの...マクドナルドでインターンしてる...",
+      "images": "assets/images/megumi_lab_thinking.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "うわ、バレた。確かにT田がやってるジャンルだ。しかも完全にパクリじゃないか..."
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "私、旅行とか身近なことの方が好きなので...もう少し親しみやすいテーマの方がいいかもしれません。",
+      "images": "assets/images/megumi_lab_worried.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "そうだね...確かにめぐみちゃんには合わないアイデアだったかも。ごめん。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "いえいえ！{{playerName}}先輩が色々考えてくださるのは嬉しいです。でも...もう少し私たちらしいアプリを作りませんか？",
+      "images": "assets/images/megumi_lab_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "気まずい空気が流れたが、めぐみは優しくフォローしてくれた。しかし、彼女の表情には少し失望の色が見えた。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ところで{{playerName}}先輩...私、プログラミング初心者なんですけど、どこから始めればいいんでしょうか？",
+      "images": "assets/images/megumi_lab_questioning.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "プログラミング初心者のめぐみに何をアドバイスする？",
+      "options": [
+        {
+          "text": "Claude Codeに書かせればいいでしょ",
+          "affectionChange": 5,
+          "next": "3A"
+        },
+        {
+          "text": "要件をしっかり定義してやっていこう",
+          "affectionChange": 10,
+          "next": "3B"
+        },
+        {
+          "text": "まずは文法とかプログラミングを手書きで模写するところからだね",
+          "affectionChange": -20,
+          "next": "3C"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@color/background_light">
+
+    <TextView
+        android:id="@+id/tvFinalMessageTitle"
+        style="@style/GameTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="告白メッセージ"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"/>
+
+    <EditText
+            android:id="@+id/etFinalMessage"
+            android:layout_width="395dp"
+            android:layout_height="283dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/conversation_background"
+            android:gravity="top"
+            android:hint="伝えたいことを入力…"
+            android:inputType="textMultiLine"
+            android:padding="16dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            app:layout_constraintBottom_toTopOf="@+id/btnSubmitFinalMessage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFinalMessageTitle" app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="0.363"/>
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitFinalMessage"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text="メッセージを送る"
+            android:textSize="18sp"
+            app:cornerRadius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="392dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

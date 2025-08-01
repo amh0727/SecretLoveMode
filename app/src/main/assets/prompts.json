@@ -1,4 +1,4 @@
 {
-  "initialTurnPrompt": "initial_turn_prompt.txt",
-  "unifiedTurnPrompt": "unified_turn_prompt.txt"
+  "affectionJudgePrompt": "affection_judge_prompt.txt",
+  "confessionPrompt": "confession_prompt.txt"
 }

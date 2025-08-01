@@ -1,0 +1,203 @@
+{
+  "title": "labtrip当日、M1GP",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "7月末、待ちに待った研究室旅行の日。海辺のリゾートホテルで行われるM1GPの発表会場は、研究室メンバーの熱気に包まれていた。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "いよいよめぐみちゃんの発表だ...僕たちが一緒に作り上げた旅行SNSアプリ。彼女、緊張してないかな。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "あれから毎日遅くまで一緒に開発して、バグを一つ一つ直して...めぐみちゃんの成長ぶりには本当に驚かされた。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "そして今日...BBQの後、僕は決めているんだ。めぐみちゃんに気持ちを伝える。もう迷わない。"
+    },
+    {
+      "type": "message",
+      "speaker": "教授",
+      "text": "それでは、{{playerName}}君・めぐみさんペアの発表をお願いします。",
+      "images": "assets/images/professor_resort_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "はい！私たちは「TravelConnect」という研究室メンバー専用の旅行SNSアプリを開発しました！",
+      "images": "assets/images/megumi_presentation_confident.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃん、すごく堂々としてる。あの緊張しがちだった彼女が、こんなに成長して..."
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "このアプリでは、旅行先での写真投稿はもちろん、おすすめスポットの共有、みんなでの旅行計画作成機能も実装しています！",
+      "images": "assets/images/megumi_presentation_confident.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "めぐみの流暢なプレゼンテーションに、会場のメンバーたちが感心したように頷いている。"
+    },
+    {
+      "type": "message",
+      "speaker": "桃",
+      "text": "おお〜！これめっちゃ使いやすそうやん！UIもすごく綺麗やし！",
+      "images": "assets/images/Momo_resort_impressed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ありがとうございます♪ 実は開発途中で色々な問題にも直面しましたが、{{playerName}}先輩に支えられて、基礎から学び直すことができました！",
+      "images": "assets/images/megumi_resort_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃん...僕のことを言ってくれて。でも本当に頑張ったのは君だよ。"
+    },
+    {
+      "type": "message",
+      "speaker": "教授",
+      "text": "素晴らしい発表でした。では、M1GPの結果発表を行います...",
+      "images": "assets/images/professor_resort_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "教授",
+      "text": "今年のM1GP優勝者は...{{playerName}}君・めぐみさんペアです！おめでとうございます！",
+      "images": "assets/images/professor_resort_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "会場に大きな拍手が響く。めぐみの目がキラキラと輝いている。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "やった！やりました！{{playerName}}先輩！！",
+      "images": "assets/images/megumi_resort_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "めぐみちゃん、おめでとう！君が頑張ったからこその結果だよ！"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "{{playerName}}先輩のおかげです！一人じゃ絶対にできませんでした！",
+      "images": "assets/images/megumi_resort_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "M1GPの発表会が終わり、夕方からは恒例のBBQパーティーが始まった。海風が心地よく吹く中、研究室メンバーたちは優勝を祝ってくれた。"
+    },
+    {
+      "type": "message",
+      "speaker": "池N",
+      "text": "めぐみちゃん、ほんまにすごかったやん！入学した時はプログラミング初心者やったのに、こんなに成長するなんて！",
+      "images": "assets/images/ikeN_bbq_impressed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ありがとうございます♪ 最初は本当に何もわからなくて...でも{{playerName}}先輩が丁寧に教えてくださって。",
+      "images": "assets/images/megumi_resort_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "入学当初のめぐみちゃんを思い出すな...あの時は話しかけるのも緊張してたのに、今こうして一緒にいることが自然に感じる。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "そういえば{{playerName}}先輩、覚えてますか？初めてお話しした時のこと。私、湯波まんじゅうのお土産を渡したんです。",
+      "images": "assets/images/megumi_bbq_nostalgic.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "もちろん覚えてるよ。あの時から、めぐみちゃんの優しさにいつも癒されてた。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "あの頃は{{playerName}}先輩って遠い存在だと思ってたんです...でも今は、こんなに近くにいて、一緒に喜べて。",
+      "images": "assets/images/megumi_bbq_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃんも同じことを感じてくれてる...今がチャンスだ。勇気を出そう。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "めぐみちゃん...良かったら後で、二人だけで話せる時間をもらえるかな？"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "え...はい！もちろんです。どこでお話ししましょうか？",
+      "images": "assets/images/megumi_bbq_curious.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "少し海辺を歩かない？伝えたいことがあるんだ。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "BBQが盛り上がる中、{{playerName}}とめぐみは静かに砂浜へと向かった。月明かりが海面を照らし、波の音が優しく響いている。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "めぐみは何も言わずとも何のために呼び出されたかわかっているかのような様子で、少し緊張した表情を浮かべている。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "{{playerName}}先輩...話って何ですか？",
+      "images": "assets/images/megumi_beach_nervous.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "よし、男ならストレートに言おう！"
+    },
+    {
+      "type": "text_input",
+      "speaker": "system",
+      "text": "告白のセリフを入力してください",
+      "placeholder": "気持ちを伝えてください",
+      "keyInput": "confession"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "あなたの気持ちをめぐみに伝えました...",
+      "options": [
+        {
+          "text": "結果を見る",
+          "next": "7A"
+        }
+      ]
+    }
+  ]
+}

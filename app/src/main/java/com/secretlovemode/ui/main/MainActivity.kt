@@ -7,6 +7,7 @@ import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -17,49 +18,53 @@ import com.secretlovemode.data.model.Character
 import com.secretlovemode.MyApplication
 import com.secretlovemode.data.repository.PromptManager
 import com.secretlovemode.R
-import com.secretlovemode.ui.main.SlmViewModel
 import com.secretlovemode.ui.game.GameActivity
+import androidx.constraintlayout.widget.Group
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import com.secretlovemode.data.repository.ScenarioManager
+import android.annotation.SuppressLint
+
 
 class MainActivity : AppCompatActivity() {
 
-    // UI 요소
-    private lateinit var btnSelectKaoru: Button
-    private lateinit var btnSelectSecretary: Button
-    private lateinit var tvSelectedCharacter: TextView
-    private lateinit var btnSelectModelFile: Button // 모델 선택 버튼
-    private lateinit var tvSelectedModelFile: TextView // 선택된 모델 파일명 표시
-    private lateinit var btnClearSelection: Button // 선택 해제 버튼
-    private lateinit var btnStartGame: Button
-    private lateinit var progressBarMain: ProgressBar
-    private lateinit var tvLoadingMessageMain: TextView
-
-    // 상태 변수
-    private var selectedCharacter: Character? = null
-
-    private var selectedModelPath: String? = null // 모델 파일 경로 저장
-    private lateinit var slmViewModel: SlmViewModel
-
-    // 캐릭터 정보
-    private val kaoru by lazy {
-        Character(
-            id = "kaoru",
-            characterName = "かおる",
-            characterPersona = "情報系のツンデレ修士",
-            modelFileName = "gemma-3n-E2B-it-int4.task", // gemma-3n-E2B-it-int4 Gemma3-1B-it
-            scenarioFileName = "scenarios_kaoru.json"
-        )
+    companion object {
+        private const val TAG = "MainActivity"
     }
 
+    // UI elements
+    private lateinit var modelSelectionGroup: Group
+    private lateinit var tvSelectedModelFile: TextView // Display selected model file name
+    private lateinit var btnSelectModelFile: Button // Model selection button
+    private lateinit var btnClearSelection: Button // Clear selection button
+    private lateinit var progressBarMain: ProgressBar
+    private lateinit var tvLoadingMessageMain: TextView
+    private lateinit var etPlayerName: EditText
+    private lateinit var btnConfirmPlayerName: Button
+    private lateinit var startButton: Button
+
+
+    // State variables
+    private lateinit var slmViewModel: SlmViewModel
+
+    // Character information (fixed for single scenario)
+    private val fixedCharacter = Character(
+        id = "megumi",
+        characterName = "めぐみ",
+        characterPersona = "情報系のツンデレ修士",
+        modelFileName = "gemma-3n-E2B-it-int4.task",
+        scenarioFileName = "session1.json"
+    )
+
     /**
-     *  파일 선택 창을 띄우고, 선택된 파일의 URI를 받아오는 런처
+     *  Launcher to open file selection and get URI of selected file
      */
-    private val modelFilePickerLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+    private val selectModelLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        Log.d(TAG, "selectModelLauncher result URI: $uri")
         uri?.let {
-            handleSelectedFile(it)
+            slmViewModel.setSelectedModelUri(it)
+            Log.d(TAG, "setSelectedModelUri called with: $it")
+        } ?: run {
+            Log.d(TAG, "selectModelLauncher received null URI.")
         }
     }
 
@@ -74,181 +79,235 @@ class MainActivity : AppCompatActivity() {
         initializeViews()
         setupClickListeners()
         observeViewModel()
-        updateButtonStates() // 초기 버튼 상태 설정
+
+        modelSelectionGroup.visibility = View.GONE
     }
 
     private fun initializeViews() {
-        btnSelectKaoru = findViewById(R.id.btnSelectKaoru)
-        btnSelectSecretary = findViewById(R.id.btnSelectSecretary)
-        tvSelectedCharacter = findViewById(R.id.tvSelectedCharacter)
-        btnSelectModelFile = findViewById(R.id.btnSelectModelFile)
         tvSelectedModelFile = findViewById(R.id.tvSelectedModelFile)
+        btnSelectModelFile = findViewById(R.id.btnSelectModelFile)
         btnClearSelection = findViewById(R.id.btnClearSelection)
-        btnStartGame = findViewById(R.id.btnStartGame)
         progressBarMain = findViewById(R.id.progressBarMain)
         tvLoadingMessageMain = findViewById(R.id.tvLoadingMessageMain)
+        etPlayerName = findViewById(R.id.etPlayerName)
+        btnConfirmPlayerName = findViewById(R.id.btnConfirmPlayerName)
+        modelSelectionGroup = findViewById(R.id.modelSelectionGroup)
+        startButton = findViewById(R.id.startButton)
     }
 
     private fun setupClickListeners() {
-        btnSelectKaoru.setOnClickListener { selectCharacterAndLoadModel(kaoru) }
-        btnStartGame.setOnClickListener { startGame() }
+        btnConfirmPlayerName.setOnClickListener {
+            val playerName = etPlayerName.text.toString().trim()
+            if (playerName.isNotEmpty()) {
+                // Save player name to ViewModel
+                slmViewModel.setPlayerName(playerName)
+                Log.d(TAG, "Player name set to: $playerName")
+                
+                // Hide name input UI
+                findViewById<TextView>(R.id.tvPlayerNameLabel).visibility = View.GONE
+                etPlayerName.visibility = View.GONE
+                btnConfirmPlayerName.visibility = View.GONE
 
-        // 모델 선택 버튼 클릭 시 파일 선택 창을 띄웁니다.
+                // Show model selection UI
+                findViewById<androidx.constraintlayout.widget.Group>(R.id.modelSelectionGroup).visibility = View.VISIBLE
+                // Re-attach click listener for startButton after it becomes visible
+                startButton.setOnClickListener {
+                    Log.d(TAG, "Start button click listener attached (re-attached).")
+                    Log.d(TAG, "Start button clicked.")
+                    showLoadingUI(true)
+                    startButton.isEnabled = false
+
+                    val currentModelUri = slmViewModel.selectedModelUri.value
+                    Log.d(TAG, "Current model URI at click: $currentModelUri")
+
+                    lifecycleScope.launch {
+                        Log.d(TAG, "Attempting to initialize CharacterAi...")
+                        val modelUri = slmViewModel.selectedModelUri.value
+                        Log.d(TAG, "Model URI before check: $modelUri")
+                        if (modelUri != null) {
+                            val success = slmViewModel.initializeCharacterAi(contentResolver, modelUri)
+                            if (success) {
+                                // Load fixed scenario after model is ready
+                                // ScenarioManager.loadScenarios(applicationContext, fixedCharacter.scenarioFileName)
+
+                                val intent = Intent(this@MainActivity, GameActivity::class.java)
+                                intent.putExtra("PLAYER_NAME", slmViewModel.playerName.value)
+                                startActivity(intent)
+                                finish() // 메인 화면을 종료하여 뒤로 가기 시 다시 나타나지 않도록 함
+                            } else {
+                                showLoadingUI(false)
+                                startButton.isEnabled = true
+                                Toast.makeText(this@MainActivity, slmViewModel.loadingError.value ?: "モデルの読み込みに失敗しました。", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            showLoadingUI(false)
+                            startButton.isEnabled = true
+                            Toast.makeText(this@MainActivity, "モデルファイルが選択されていません。", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } else {
+                Toast.makeText(this, "플레이어 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // When model selection button is clicked, open file selection.
         btnSelectModelFile.setOnClickListener {
-            modelFilePickerLauncher.launch(arrayOf("*/*")) // 모든 종류의 파일 선택 가능
+            selectModelLauncher.launch("*/*")
         }
 
-        // 선택 해제 버튼 기능 구현
+
+        // Implement clear selection button functionality
         btnClearSelection.setOnClickListener {
-            clearSelections()
-        }
-    }
-
-    private fun selectCharacterAndLoadModel(character: Character) {
-        this.selectedCharacter = character
-        tvSelectedCharacter.text = "選択済み: ${character.characterName}"
-        tvSelectedModelFile.text = "モデル準備中: ${character.modelFileName}"
-        // assets에서 모델 파일을 내부 저장소로 복사하고 로드 시작
-        lifecycleScope.launch {
-            try {
-                val modelFile = copyAssetToFile(character.modelFileName)
-                selectedModelPath = modelFile.absolutePath
-                slmViewModel.loadModel(selectedModelPath!!)
-            } catch (e: IOException) {
-                Log.e("MainActivity", "Asset 파일 복사 실패: ${character.modelFileName}", e)
-                Toast.makeText(this@MainActivity, "モデルファイルの準備に失敗しました。", Toast.LENGTH_SHORT).show()
-                clearSelections() // 실패 시 선택 초기화
-            }
-        }
-    }
-
-
-    /**
-     * Assets 폴더의 파일을 앱 내부 캐시 디렉토리로 복사하는 함수
-     * @param assetFileName assets 폴더에 있는 파일 이름
-     * @return 복사된 파일 객체
-     */
-    @Throws(IOException::class)
-    private fun copyAssetToFile(assetFileName: String): File {
-        val destinationFile = File(cacheDir, assetFileName)
-        // 이미 파일이 존재하면 다시 복사하지 않고 바로 반환 (효율성)
-        if (destinationFile.exists()) {
-            return destinationFile
+            slmViewModel.setSelectedModelUri(null)
         }
 
-        assets.open(assetFileName).use { inputStream ->
-            FileOutputStream(destinationFile).use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-        return destinationFile
-    }
+        startButton.setOnClickListener {
+            Log.d(TAG, "Start button click listener attached.")
+            Log.d(TAG, "Start button clicked.")
+            showLoadingUI(true)
+            startButton.isEnabled = false
 
-    /**
-     *  사용자가 선택한 파일을 처리하는 함수
-     */
-    private fun handleSelectedFile(uri: Uri) {
-        // URI로부터 파일 이름을 가져옵니다.
-        val fileName = getFileNameFromUri(uri) ?: "selected_model.bin"
-        val destinationFile = File(cacheDir, fileName)
+            val currentModelUri = slmViewModel.selectedModelUri.value
+            Log.d(TAG, "Current model URI at click: $currentModelUri")
 
-        try {
-            // 선택된 파일을 앱 내부 캐시 디렉토리로 복사하여 안정적인 파일 경로를 확보합니다.
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                FileOutputStream(destinationFile).use { outputStream ->
-                    inputStream.copyTo(outputStream)
+            lifecycleScope.launch {
+                Log.d(TAG, "Attempting to initialize CharacterAi...")
+                val modelUri = slmViewModel.selectedModelUri.value
+                Log.d(TAG, "Model URI before check: $modelUri")
+                if (modelUri != null) {
+                    val success = slmViewModel.initializeCharacterAi(contentResolver, modelUri)
+                    if (success) {
+                        // Load fixed scenario after model is ready
+                        // ScenarioManager.loadScenarios(applicationContext, fixedCharacter.scenarioFileName)
+
+                        val intent = Intent(this@MainActivity, GameActivity::class.java)
+                        intent.putExtra("PLAYER_NAME", slmViewModel.playerName.value)
+                        startActivity(intent)
+                        finish() // 메인 화면을 종료하여 뒤로 가기 시 다시 나타나지 않도록 함
+                    } else {
+                        showLoadingUI(false)
+                        startButton.isEnabled = true
+                        Toast.makeText(this@MainActivity, slmViewModel.loadingError.value ?: "モデルの読み込みに失敗しました。", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    showLoadingUI(false)
+                    startButton.isEnabled = true
+                    Toast.makeText(this@MainActivity, "モデルファイルが選択されていません。", Toast.LENGTH_SHORT).show()
                 }
             }
-            // 모델 경로를 저장하고 UI를 업데이트한 후, 모델 로드를 시작합니다.
-            selectedModelPath = destinationFile.absolutePath
-            tvSelectedModelFile.text = "選択済み: $fileName"
-            slmViewModel.loadModel(selectedModelPath!!)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(this, "ファイルの処理中にエラーが発生しました。", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+    
 
 
     private fun clearSelections() {
-        selectedCharacter = null
-        selectedModelPath = null
-        tvSelectedCharacter.text = "未選択"
         tvSelectedModelFile.text = "未選択"
-        slmViewModel.unloadModel() // ViewModel의 모델 상태도 초기화
+        slmViewModel.unloadModel() // Also initialize ViewModel's model state
+        ScenarioManager.clearScenarios() // Also initialize scenario data
         updateButtonStates()
     }
 
+    /**
+     * ViewModel의 LiveData를 관찰하여 UI를 자동으로 업데이트합니다.
+     */
     private fun observeViewModel() {
-        slmViewModel.isModelLoading.observe(this) { isLoading ->
-            showLoadingUI(isLoading)
+        slmViewModel.selectedModelUri.observe(this) { uri ->
+            Log.d(TAG, "Selected URI observed: $uri")
+            if (uri != null) {
+                try {
+                    val fileName = getFileNameFromUri(uri) ?: "選択されたファイル"
+                    tvSelectedModelFile.text = fileName
+                    Log.d(TAG, "Updated selected file name: $fileName")
+                } catch (e: SecurityException) {
+                    Log.w(TAG, "SecurityException accessing URI: ${e.message}")
+                    tvSelectedModelFile.text = "選択されたモデル"
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error accessing URI: ${e.message}")
+                    tvSelectedModelFile.text = "選択されたファイル"
+                }
+            } else {
+                tvSelectedModelFile.text = "未選択"
+            }
             updateButtonStates()
         }
 
         slmViewModel.isModelReady.observe(this) { isReady ->
+            Log.d(TAG, "isModelReady observed: $isReady")
             updateButtonStates()
         }
 
-        slmViewModel.loadingError.observe(this) { errorMessage ->
-            if (errorMessage != null) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-                // 에러 발생 시 모델 선택 상태 초기화
-                selectedModelPath = null
-                tvSelectedModelFile.text = "未選択"
-                updateButtonStates()
-            }
+        slmViewModel.isModelLoading.observe(this) { isLoading ->
+            Log.d(TAG, "isModelLoading observed: $isLoading")
+            updateButtonStates()
+            showLoadingUI(isLoading)
         }
     }
+    
 
     private fun showLoadingUI(isLoading: Boolean) {
         progressBarMain.visibility = if (isLoading) View.VISIBLE else View.GONE
         tvLoadingMessageMain.visibility = if (isLoading) View.VISIBLE else View.GONE
-        // 로딩 중에는 모든 상호작용 버튼 비활성화
-        btnSelectKaoru.isEnabled = !isLoading
-        btnSelectSecretary.isEnabled = !isLoading
+        // Disable all interaction buttons during loading
         btnSelectModelFile.isEnabled = !isLoading
         btnClearSelection.isEnabled = !isLoading
     }
 
     /**
-     * 모든 버튼의 상태를 한 곳에서 관리하는 함수
+     * Function to manage the state of all buttons in one place
      */
     private fun updateButtonStates() {
-        val isCharacterSelected = selectedCharacter != null
-        val isModelSelected = selectedModelPath != null
+        val isModelSelected = slmViewModel.selectedModelUri.value != null
         val isModelReady = slmViewModel.isModelReady.value == true
-        val isNotLoading = slmViewModel.isModelLoading.value == false
+        val isModelLoading = slmViewModel.isModelLoading.value == true
 
-        // 게임 시작: 캐릭터 선택되고, 모델이 준비되었으며, 로딩 중이 아닐 때만 활성화
-        btnStartGame.isEnabled = isCharacterSelected && isModelReady && isNotLoading
+        Log.d(TAG, "updateButtonStates: isModelSelected=$isModelSelected, isModelReady=$isModelReady, isModelLoading=$isModelLoading")
 
-        // 선택 해제: 캐릭터나 모델 중 하나라도 선택되어 있으면 활성화
-        btnClearSelection.isEnabled = isCharacterSelected || isModelSelected
+        // Start game: Enabled when model is selected and not loading
+        startButton.isEnabled = isModelSelected && !isModelLoading
+        startButton.visibility = if (isModelSelected) View.VISIBLE else View.GONE
+
+        // Clear selection: Enabled if model is selected
+        btnClearSelection.isEnabled = isModelSelected
+
+        // Select model button: Enabled if not loading
+        btnSelectModelFile.isEnabled = !isModelLoading
     }
 
-    private fun startGame() {
-        if (btnStartGame.isEnabled) { // 버튼이 활성화된 상태일 때만 실행
-            val intent = Intent(this, GameActivity::class.java).apply {
-                putExtra("SELECTED_CHARACTER", selectedCharacter)
-            }
-            startActivity(intent)
-        }
-    }
-
-    /**
-     *  URI에서 파일 이름을 추출하는 헬퍼 함수
-     */
+    @SuppressLint("Range")
     private fun getFileNameFromUri(uri: Uri): String? {
         var fileName: String? = null
-        contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (displayNameIndex != -1) {
-                    fileName = cursor.getString(displayNameIndex)
+        
+        try {
+            if (uri.scheme == "content") {
+                contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        if (displayNameIndex != -1) {
+                            fileName = cursor.getString(displayNameIndex)
+                        }
+                    }
                 }
             }
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException querying URI: ${e.message}")
+            // 권한 오류 시 URI에서 파일명 추출 시도
+            fileName = uri.lastPathSegment
+        } catch (e: Exception) {
+            Log.w(TAG, "Exception querying URI: ${e.message}")
+            fileName = uri.lastPathSegment
+        }
+        
+        if (fileName == null) {
+            fileName = uri.lastPathSegment
         }
         return fileName
     }
+
+    
+
+
 
 }

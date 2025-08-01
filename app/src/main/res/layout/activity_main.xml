@@ -11,52 +11,52 @@
             android:id="@+id/groupMainUi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="tvSelectCharacterLabel,btnSelectKaoru,btnSelectSecretary,tvSelectedCharacter,tvSelectModelLabel,btnSelectModelFile,tvSelectedModelFile,btnClearSelection,btnStartGame" />
+            app:constraint_referenced_ids="tvPlayerNameLabel,etPlayerName,btnConfirmPlayerName,tvSelectModelLabel,btnSelectModelFile,tvSelectedModelFile,btnClearSelection,startButton" />
 
     <TextView
-            android:id="@+id/tvSelectCharacterLabel"
+            android:id="@+id/tvPlayerNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="180dp"
-            android:text="キャラクターを選択してください："
+            android:text="プレイヤー名を入力してください："
             android:textSize="18sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-            android:id="@+id/btnSelectKaoru"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="かおる"
-            app:layout_constraintTop_toBottomOf="@id/tvSelectCharacterLabel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSelectSecretary"
-            app:layout_constraintHorizontal_chainStyle="packed" />
-
-    <Button
-            android:id="@+id/btnSelectSecretary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="秘書"
-            app:layout_constraintTop_toTopOf="@id/btnSelectKaoru"
-            app:layout_constraintStart_toEndOf="@id/btnSelectKaoru"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-            android:id="@+id/tvSelectedCharacter"
+    <EditText
+            android:id="@+id/etPlayerName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="12dp"
             android:layout_marginEnd="32dp"
-            android:text="未選択"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/btnSelectKaoru"
+            android:layout_marginTop="16dp"
+            android:hint="名前"
+            android:inputType="textPersonName"
+            android:maxLength="10"
+            app:layout_constraintTop_toBottomOf="@id/tvPlayerNameLabel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+            android:id="@+id/btnConfirmPlayerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="確認"
+            app:layout_constraintTop_toBottomOf="@id/etPlayerName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+            android:id="@+id/modelSelectionGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="tvSelectModelLabel,btnSelectModelFile,tvSelectedModelFile,btnClearSelection,startButton" />
+
+
+
 
     <TextView
             android:id="@+id/tvSelectModelLabel"
@@ -65,9 +65,8 @@
             android:layout_marginTop="24dp"
             android:text="モデルファイルを選択してください："
             android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/tvSelectedCharacter"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent" tools:ignore="MissingConstraints"/>
 
     <Button
             android:id="@+id/btnSelectModelFile"
@@ -106,11 +105,15 @@
             android:textColor="?attr/colorError" />
 
     <Button
-            android:id="@+id/btnStartGame"
+            android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="ゲーム開始"
+            android:text="Start Game"
+            android:textSize="24sp"
+            android:padding="16dp"
+            android:background="@drawable/button_style"
+            android:textColor="@android:color/white"
             android:enabled="false"
             app:layout_constraintTop_toBottomOf="@id/btnClearSelection"
             app:layout_constraintStart_toStartOf="parent"

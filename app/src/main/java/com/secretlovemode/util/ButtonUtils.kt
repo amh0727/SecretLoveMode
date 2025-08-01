@@ -9,22 +9,22 @@ import kotlin.math.max
 object ButtonUtils {
 
     /**
-     * 텍스트 길이에 따라 버튼의 높이와 텍스트 크기를 동적으로 조절
+     * Dynamically adjusts button height and text size based on text length
      */
     fun adjustButtonForText(button: Button, text: String) {
         val context = button.context
 
-        // 텍스트 길이 계산
+        // Calculate text length
         val textLength = text.length
         val lineCount = calculateLineCount(text, button)
 
-        // 기본 설정
+        // Base settings
         val baseTextSize = 16f // sp
-        val baseHeight = dpToPx(context, 56f) // 기본 높이
+        val baseHeight = dpToPx(context, 56f) // Base height
         val maxTextSize = 18f
         val minTextSize = 12f
 
-        // 텍스트 크기 조절 (길수록 작게)
+        // Adjust text size (smaller for longer text)
         val adjustedTextSize = when {
             textLength <= 10 -> maxTextSize
             textLength <= 20 -> baseTextSize
@@ -32,21 +32,21 @@ object ButtonUtils {
             else -> minTextSize
         }.coerceIn(minTextSize, maxTextSize)
 
-        // 높이 조절 (여러 줄이면 높게)
+        // Adjust height (taller for multiple lines)
         val adjustedHeight = when {
             lineCount <= 1 -> baseHeight
             lineCount == 2 -> (baseHeight * 1.4f).toInt()
             else -> (baseHeight * 1.8f).toInt()
         }
 
-        // 패딩 조절
+        // Adjust padding
         val verticalPadding = when {
             lineCount <= 1 -> dpToPx(context, 12f)
             lineCount == 2 -> dpToPx(context, 16f)
             else -> dpToPx(context, 20f)
         }
 
-        // 적용
+        // Apply
         button.setTextSize(TypedValue.COMPLEX_UNIT_SP, adjustedTextSize)
         button.layoutParams.height = adjustedHeight
         button.setPadding(
@@ -56,7 +56,7 @@ object ButtonUtils {
             verticalPadding
         )
 
-        // 애니메이션 효과
+        // Animation effect
         button.animate()
             .scaleX(0.95f)
             .scaleY(0.95f)
@@ -72,7 +72,7 @@ object ButtonUtils {
     }
 
     /**
-     * 텍스트가 몇 줄을 차지할지 계산
+     * Calculates how many lines the text will occupy
      */
     private fun calculateLineCount(text: String, button: Button): Int {
         val paint = Paint()
@@ -86,7 +86,7 @@ object ButtonUtils {
     }
 
     /**
-     * dp를 px로 변환
+     * Converts dp to px
      */
     private fun dpToPx(context: Context, dp: Float): Int {
         return TypedValue.applyDimension(
@@ -97,16 +97,16 @@ object ButtonUtils {
     }
 
     /**
-     * 버튼들의 크기를 균일하게 맞춤
+     * Balances the sizes of buttons uniformly
      */
     fun balanceButtonSizes(buttons: List<Button>) {
         if (buttons.isEmpty()) return
 
-        // 가장 긴 텍스트 찾기
+        // Find the longest text
         val maxTextLength = buttons.maxOfOrNull { it.text.length } ?: 0
         val maxLineCount = buttons.maxOfOrNull { calculateLineCount(it.text.toString(), it) } ?: 1
 
-        // 모든 버튼을 가장 큰 요구사항에 맞춤
+        // Adjust all buttons to meet the largest requirement
         buttons.forEach { button ->
             val textLength = button.text.length
             val baseTextSize = when {

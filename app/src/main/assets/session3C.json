@@ -1,0 +1,91 @@
+{
+  "title": "手書きでプログラミング学習",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "まずは文法とかプログラミングを手書きで模写するところからだね。コードを音読して基礎をしっかり身につけることから始めよう。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "手書きと音読ですか？でも、基礎が大切なのは分かります！頑張ります♪",
+      "images": "assets/images/megumi_lab_determined.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "そうそう、昔大学の授業でこんなのがあったな。プログラムを手書きで写させたり、音読させたり...懐かしい。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "数時間後...めぐみは真面目にコードを手書きで写し続けている。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "「文の最後はセミコロン！！...」うーん、{{playerName}}先輩、これを声に出して読むのは恥ずかしいです...",
+      "images": "assets/images/megumi_lab_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "音読も大事だよ。プログラムの流れを理解するために。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "さらに数時間後..."
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃん、すごく真面目に取り組んでくれてるけど、全然上達してない気がする...。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "{{playerName}}先輩...私、ちゃんと覚えられてるんでしょうか？なんだか文字を写してるだけのような...",
+      "images": "assets/images/megumi_lab_worried.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "まずい...このままじゃM1GP当日に間に合わない。手書き学習はちょっと非効率だったかも。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "うーん、このやり方だと時間がかかりすぎるかも。別のアプローチを考えよう。場所も変えて、もっと実践的にやろうか。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "はい...正直、手書きだとあまり理解が深まらなくて。実際にパソコンで動かしながら学びたいです。",
+      "images": "assets/images/megumi_lab_questioning.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "二人っきりになるチャンスだ！どこで作業する？",
+      "options": [
+        {
+          "text": "奈良公園で自然を感じながら",
+          "affectionChange": 10,
+          "next": "4A"
+        },
+        {
+          "text": "集中できるカフェで",
+          "affectionChange": 20,
+          "next": "4B"
+        },
+        {
+          "text": "夜中の研究室で",
+          "affectionChange": -15,
+          "next": "4C"
+        }
+      ]
+    }
+  ]
+}

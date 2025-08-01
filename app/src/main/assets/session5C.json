@@ -1,0 +1,173 @@
+{
+  "title": "居酒屋で晩御飯",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "居酒屋に行こう！たまには大人の雰囲気で、ゆっくり話せるしね。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "居酒屋ですか♪ なんだか大人っぽいですね！",
+      "images": "assets/images/megumi_izakaya_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "二人は近くの居酒屋に入り、奥の席に座った。落ち着いた雰囲気の中、お酒を注文することにした。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "めぐみちゃん、お酒は飲める？"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "少しなら大丈夫です♪ カクテルとか好きなんです。",
+      "images": "assets/images/megumi_izakaya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "お酒が運ばれてきて、二人は乾杯をした。少しずつお酒が回り、会話も弾んでいく。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "{{playerName}}先輩って、普段はクールに見えますけど、実は優しいんですね♪",
+      "images": "assets/images/megumi_izakaya_tipsy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃん、少しお酒が回ってる？いつもより話しやすそうで、こっちも緊張がほぐれてきた。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "めぐみちゃんこそ、いつも明るくて、一緒にいると楽しいよ。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "えへへ♪ ありがとうございます。今日は本当に楽しかったです。",
+      "images": "assets/images/megumi_izakaya_smiling.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "そんないい雰囲気の中、お店からサービスの一品が運ばれてきた。"
+    },
+    {
+      "type": "message",
+      "speaker": "店員",
+      "text": "お客様、こちらサービスのお通しになります〜"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "あれ？この声...まさか..."
+    },
+    {
+      "type": "message",
+      "speaker": "Hゴン",
+      "text": "あ！{{playerName}}先輩とめぐみちゃん！",
+      "images": "assets/images/Hgon_izakaya_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "Hゴンくん！？ここでバイトしてたんですか？",
+      "images": "assets/images/megumi_izakaya_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "居酒屋でバイトしてたのか...ありがとう！！"
+    },
+    {
+      "type": "message",
+      "speaker": "Hゴン",
+      "text": "はい！お金貯めないといけなくて...二人ともお疲れ様です♪",
+      "images": "assets/images/Hgon_izakaya_working.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Hゴンは他のお客さんの対応に向かっていった。二人はサービスに感謝しつつ、再びいい雰囲気に戻る。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "Hゴンくんのおかげで、なんだかほっこりしちゃいました♪ ところで{{playerName}}先輩、もし私がM1GPで優勝できたら、お疲れ様旅行行きましょうよ！",
+      "images": "assets/images/megumi_izakaya_inviting.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "お酒の勢いもあるかもしれないけど...めぐみちゃんから旅行の誘い！これは嬉しい！"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "それは素晴らしいアイデアだね！ぜひ行こう！"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "やったー♪ それじゃあ、{{playerName}}先輩はどこに行きたいですか？",
+      "images": "assets/images/megumi_izakaya_questioning.png"
+    },
+    {
+      "type": "text_input",
+      "speaker": "system",
+      "text": "どこに旅行したいか教えてください",
+      "placeholder": "行きたい場所を入력してください",
+      "keyInput": "travel_destination"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "やったー♪ 約束ですよ！絶対にM1GPで優勝して、{{playerName}}先輩と旅行に行きます！",
+      "images": "assets/images/megumi_izakaya_determined.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃんがこんなに喜んでくれるなんて...僕も頑張って、彼女をしっかりサポートしなければ。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "うん、約束だ！僕もメンターとして、めぐみちゃんが優勝できるように全力でサポートするよ。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ありがとうございます♪ {{playerName}}先輩と一緒なら、きっと素敵なアプリが作れそうです！",
+      "images": "assets/images/megumi_izakaya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "お酒の力も借りて、二人の距離はさらに縮まった。Hゴンのサプライズもあり、忘れられない夜となった。M1GPでの優勝と約束の旅行という目標に向かって、二人の想いは一つになっていく..."
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "時は過ぎ、ついに研究室旅行とM1GP発表の日がやってきた...",
+      "options": [
+        {
+          "text": "M1GP発表会に参加する（高い好感度で優勝を目指す）",
+          "next": "6A"
+        },
+        {
+          "text": "M1GP発表会に参加する（普通の結果を受け入れる）",
+          "next": "6B"
+        }
+      ]
+    }
+  ]
+}
