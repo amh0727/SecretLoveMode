@@ -10,6 +10,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.JsonNull
 import java.io.File
 import com.secretlovemode.data.model.ChatMessage
 import android.content.ContentValues.TAG
@@ -25,7 +29,7 @@ class CharacterAi(
 
     companion object {
         private const val TAG = "CharacterAi"
-        private const val DEFAULT_MAX_TOKENS_RESPONSE = 2048  // 캐시 크기 제한 내로 조정
+        private const val DEFAULT_MAX_TOKENS_RESPONSE = 4000  // 캐시 크기 제한 내로 조정
         private const val DEFAULT_TOP_K = 75
     }
 
@@ -130,9 +134,19 @@ class CharacterAi(
                 }
 
                 Log.d(TAG, "Extracted JSON: $jsonString") // Log the extracted JSON
-                val result = json.decodeFromString<AffectionJudgeResponse>(jsonString)
-                Log.d(TAG, "Parsed AffectionJudgeResponse: $result") // Log the parsed result
-                (result.affectionChange).coerceIn(-20, 20)
+                
+                // Try parsing with flexible field names
+                val affectionChange = try {
+                    val result = json.decodeFromString<AffectionJudgeResponse>(jsonString)
+                    result.affectionChange
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to parse with 'affectionChange', trying alternative field names")
+                    // Try parsing with alternative field names
+                    parseAffectionFromAlternativeFields(jsonString)
+                }
+                
+                Log.d(TAG, "Parsed affection change: $affectionChange")
+                affectionChange.coerceIn(-20, 20)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to parse affection judge response: $responseString", e)
                 0
@@ -190,21 +204,20 @@ class CharacterAi(
 
     private fun formatConversationHistory(history: List<ChatMessage>): String {
         if (history.isEmpty()) {
-            return "まだ会話の履歴がありません。"
+            return "なし"
         }
         
-        return history.takeLast(20).joinToString("\n") { message ->
-            when (message.role) {
-                ChatMessage.ROLE_USER -> "プレイヤー: ${message.message}"
-                ChatMessage.ROLE_MODEL -> "恵: ${message.message}"
-                ChatMessage.ROLE_SYSTEM -> "[システム]: ${message.message}"
-                else -> ""
-            }
-        }.let { formattedHistory ->
-            if (history.size > 20) {
-                "[最近の20件の会話のみ表示]\n$formattedHistory"
+        return history.takeLast(10).joinToString("\n") { message ->
+            val truncatedMessage = if (message.message.length > 50) {
+                message.message.take(50) + "..."
             } else {
-                formattedHistory
+                message.message
+            }
+            when (message.role) {
+                ChatMessage.ROLE_USER -> "P: $truncatedMessage"
+                ChatMessage.ROLE_MODEL -> "M: $truncatedMessage"
+                ChatMessage.ROLE_SYSTEM -> "[S]: $truncatedMessage"
+                else -> ""
             }
         }
     }
@@ -213,24 +226,19 @@ class CharacterAi(
      * Key input 값들을 포맷팅하여 문자열로 변환합니다.
      */
     private fun formatKeyInputContext(keyInputValues: Map<String, String>): String {
-        Log.d(TAG, "formatKeyInputContext called with keyInputValues: $keyInputValues")
-        
         if (keyInputValues.isEmpty()) {
-            Log.d(TAG, "keyInputValues is empty, returning default message")
-            return "まだ重要な選択はありません。"
+            return "なし"
         }
         
-        val formatted = keyInputValues.entries.joinToString("\n") { (key, value) ->
+        return keyInputValues.entries.take(5).joinToString(", ") { (key, value) ->
+            val truncatedValue = if (value.length > 30) value.take(30) + "..." else value
             when (key) {
-                "travel_destination" -> "旅行先: $value"
-                "confession" -> "告白内容: $value"
-                "name_input" -> "名前: $value"
-                else -> "$key: $value"
+                "travel_destination" -> "旅行:$truncatedValue"
+                "confession" -> "告白:$truncatedValue"
+                "name_input" -> "名前:$truncatedValue"
+                else -> "$key:$truncatedValue"
             }
         }
-        
-        Log.d(TAG, "Formatted keyInputContext: $formatted")
-        return formatted
     }
 
     /**
@@ -267,42 +275,41 @@ class CharacterAi(
      * 섹션별 요약을 포맷팅하여 문자열로 변환합니다.
      */
     private fun formatSectionSummaries(sectionSummaries: Map<String, String>): String {
-        Log.d(TAG, "formatSectionSummaries called with sections: ${sectionSummaries.keys}")
-        
         if (sectionSummaries.isEmpty()) {
-            Log.d(TAG, "sectionSummaries is empty, returning default message")
-            return "まだセクション要約はありません。"
+            return "なし"
         }
         
-        val formatted = sectionSummaries.entries.joinToString("\n\n") { (sectionId, summary) ->
-            "=== セクション$sectionId 要約 ===\n$summary"
+        return sectionSummaries.entries.toList().takeLast(3).joinToString("\n") { entry ->
+            val truncatedSummary = if (entry.value.length > 100) {
+                entry.value.take(100) + "..."
+            } else {
+                entry.value
+            }
+            "S${entry.key}: $truncatedSummary"
         }
-        
-        Log.d(TAG, "Formatted sectionSummaries length: ${formatted.length}")
-        return formatted
     }
 
     /**
      * AI를 사용하여 플레이어의 고백 성공 여부를 판단합니다.
      * @param gameState 현재 게임 상태
      * @param confessionMessage 플레이어가 입력한 고백 메시지
-     * @return 고백 성공 여부 (true/false)
+     * @return Pair<Boolean, String?> - (성공여부, 판정이유)
      */
     suspend fun judgeConfession(
         gameState: GameState,
         confessionMessage: String,
         conversationHistory: List<ChatMessage>
-    ): Boolean {
+    ): Pair<Boolean, String?> {
         if (!isModelReady || llmInference == null) {
             Log.e(TAG, "Confession Judge: Model not ready.")
-            return false
+            return Pair(false, null)
         }
 
         return mutex.withLock {
             val promptTemplate = PromptManager.getConfessionPrompt(playerName)
                 ?: run {
                     Log.e(TAG, "Confession Judge: Prompt template not found.")
-                    return@withLock false
+                    return@withLock Pair(false, null)
                 }
 
             val prompt = promptTemplate
@@ -319,25 +326,55 @@ class CharacterAi(
             val responseString = generateFullResponse(prompt)
                 ?: run {
                     Log.e(TAG, "Confession Judge: Failed to generate response.")
-                    return@withLock false
+                    return@withLock Pair(false, null)
                 }
 
             Log.d(TAG, "Confession Judge Raw Response: $responseString")
+
+            // 호감도 85 이상이면 강제 성공 (안전장치)
+            if (gameState.affinity >= 85) {
+                Log.i(TAG, "Confession Judge: Affinity ${gameState.affinity} >= 85, forcing success")
+                return@withLock Pair(true, "高い好感度による自動成功")
+            }
 
             try {
                 val jsonString = extractJson(responseString)
                 if (jsonString.isEmpty()) {
                     Log.e(TAG, "Confession Judge: No JSON found in response: $responseString")
-                    return@withLock false
+                    // 호감도 80 이상이면 JSON 파싱 실패해도 성공으로 처리
+                    return@withLock if (gameState.affinity >= 80) {
+                        Log.i(TAG, "Confession Judge: High affinity ${gameState.affinity}, defaulting to success")
+                        Pair(true, "JSON解析失敗、高好感度により成功")
+                    } else {
+                        Pair(false, "JSON解析失敗")
+                    }
                 }
 
                 Log.d(TAG, "Extracted JSON: $jsonString")
                 val result = json.decodeFromString<ConfessionResponse>(jsonString)
                 Log.d(TAG, "Parsed ConfessionResponse: $result")
-                result.success
+                
+                // 고백 메시지 품질에 따른 상세 로그
+                result.messageBonus?.let { bonus ->
+                    Log.i(TAG, "🎯 Confession message bonus: $bonus points")
+                }
+                result.finalAffinity?.let { finalAff ->
+                    Log.i(TAG, "📊 Final calculated affinity: $finalAff (original: ${gameState.affinity})")
+                }
+                result.reason?.let { reason ->
+                    Log.i(TAG, "💬 AI judgment reason: $reason")
+                }
+                
+                Pair(result.success, result.reason)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to parse confession response: $responseString", e)
-                false
+                // 호감도 80 이상이면 파싱 실패해도 성공으로 처리
+                if (gameState.affinity >= 80) {
+                    Log.i(TAG, "Confession Judge: High affinity ${gameState.affinity}, defaulting to success despite parse error")
+                    Pair(true, "解析エラー、高好感度により成功")
+                } else {
+                    Pair(false, "解析エラー")
+                }
             }
         }
     }
@@ -382,25 +419,13 @@ class CharacterAi(
 
             val prompt = """
 <|system|>
-あなたは恋愛ゲームの物語分析AIです。提供されたセクションの会話を要約し、メインキャラクター「めぐみ」の内心と感情の変化を分析してください。
+恋愛ゲーム要約AI。セクション会話を簡潔に要約。
 
-### キャラクター情報
-- **名前:** ${gameState.characterName}
-- **ペルソナ:** ${gameState.characterPersona}
-- **現在の好感度:** ${gameState.affinity}
-
-### セクション$sectionId の会話内容:
+キャラ: ${gameState.characterName} (好感度${gameState.affinity})
+セクション$sectionId:
 $dialogueText
 
-### 出力形式
-以下の形式で要約してください:
-
-**あらすじ:** (このセクションで起こった出来事を2-3文で要約)
-
-**めぐみの内心:** (めぐみの感情、思考、プレイヤーに対する印象の変化を詳しく分析)
-
-**重要なポイント:** (今後の関係性に影響を与えそうな要素)
-
+出力: **要約:** (8-15文) **めぐみ:** (感情変化) **ポイント:** (重要要素)
 <|assistant|>
 """
 
@@ -415,6 +440,31 @@ $dialogueText
         }
     }
 
+    /**
+     * 다양한 필드 이름으로 호감도 변화값을 파싱하는 헬퍼 함수
+     */
+    private fun parseAffectionFromAlternativeFields(jsonString: String): Int {
+        return try {
+            val jsonObject = json.parseToJsonElement(jsonString).jsonObject
+            
+            // 가능한 필드 이름들을 순서대로 시도
+            val possibleFields = listOf("affectionChange", "affection", "change", "value", "score")
+            
+            for (fieldName in possibleFields) {
+                val element = jsonObject[fieldName]
+                if (element != null && element !is JsonNull) {
+                    return element.jsonPrimitive.int
+                }
+            }
+            
+            Log.e(TAG, "No valid affection field found in JSON: $jsonString")
+            0
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse affection from alternative fields: $jsonString", e)
+            0
+        }
+    }
+
     // --- JSON 파싱을 위한 내부 데이터 클래스 ---
 
     @Serializable
@@ -424,7 +474,10 @@ $dialogueText
 
     @Serializable
     private data class ConfessionResponse(
-        val success: Boolean
+        val success: Boolean,
+        val finalAffinity: Int? = null,
+        val messageBonus: Int? = null,
+        val reason: String? = null
     )
     
     /**
@@ -452,7 +505,7 @@ $dialogueText
             
             // 대화 기록을 텍스트로 변환
             val historyText = conversationHistory.takeLast(10).joinToString("\n") { message ->
-                "${message.role}: ${message.content}"
+                "${message.role}: ${message.message}"
             }
             
             val prompt = """

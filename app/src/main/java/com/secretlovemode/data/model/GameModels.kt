@@ -21,7 +21,8 @@ data class GameState(
     val confessionKeyword: String? = null, // Variable to receive user input flag // Add "requiresUserInput": true to scenario json
     val sectionSummaries: Map<String, String> = emptyMap(), // 섹션별 요약 저장
     val keyInputValues: Map<String, String> = emptyMap(), // key_input 값들 저장
-    val sectionDialogues: Map<String, List<SectionDialogue>> = emptyMap() // 섹션별 전체 대화 저장
+    val sectionDialogues: Map<String, List<SectionDialogue>> = emptyMap(), // 섹션별 전체 대화 저장
+    val confessionJudgmentReason: String? = null // AI 고백 판정 이유 저장
 ) : JavaSerializable {
     fun getAffinityDescription(): String {
         return when {

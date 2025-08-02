@@ -4,7 +4,8 @@
     {
       "type": "message",
       "speaker": "system",
-      "text": "7月末、待ちに待った研究室旅行の日。海辺のリゾートホテルで行われるM1GPの発表会場は、研究室メンバーの熱気に包まれていた。"
+      "text": "7月末、待ちに待った研究室旅行の日。海辺のリゾートホテルで行われるM1GPの発表会場は、研究室メンバーの熱気に包まれていた。",
+      "images": "assets/images/labtrip_general.png"
     },
     {
       "type": "message",
@@ -115,7 +116,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "ありがとうございます♪ 最初は本当に何もわからなくて...でも{{playerName}}先輩が丁寧に教えてくださって。",
-      "images": "assets/images/megumi_resort_happy.png"
+      "images": "assets/images/megumi_bbq_happy.png"
     },
     {
       "type": "message",

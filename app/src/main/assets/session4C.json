@@ -105,7 +105,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "なんだか賑やかですね...夜も遅いのでご飯行きませんか？",
-      "images": "assets/images/megumi_lab_tired.png"
+      "images": "assets/images/megumi_lab_tired_pc.png"
     },
     {
       "type": "choice",

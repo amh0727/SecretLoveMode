@@ -53,7 +53,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "えへへ♪ ありがとうございます。今日は本当に楽しかったです。",
-      "images": "assets/images/megumi_izakaya_smiling.png"
+      "images": "assets/images/megumi_izakaya_happy.png"
     },
     {
       "type": "message",
@@ -74,7 +74,7 @@
       "type": "message",
       "speaker": "Hゴン",
       "text": "あ！{{playerName}}先輩とめぐみちゃん！",
-      "images": "assets/images/Hgon_izakaya_surprised.png"
+      "images": "assets/images/Hgon_izakaya_working.png"
     },
     {
       "type": "message",

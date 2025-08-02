@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Rank -->
+        <TextView
+            android:id="@+id/tvRank"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/primary_text_color"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Player Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPlayerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="プレイヤー名"
+                android:textColor="@color/primary_text_color"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="好感度: "
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvAffinity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="85"
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="日時: "
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025-01-01 12:00"
+                    android:textColor="@color/secondary_text_color"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Result Status -->
+        <TextView
+            android:id="@+id/tvResultStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/status_badge_success"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="告白成功 ♥"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -4,7 +4,8 @@
     {
       "type": "message",
       "speaker": "主人公(心の声)",
-      "text": "え...今なんて？"
+      "text": "え...今なんて？",
+      "images": "assets/images/megumi_beach_shy.png"
     },
     {
       "type": "message",
@@ -63,7 +64,7 @@
     {
       "type": "message",
       "speaker": "system",
-      "text": "今日は前からめぐみと計画を立てていた旅行の日だ。"
+      "text": "今日は前からめぐみと計画を立てていた{{travel_destination}}旅行の日だ。"
     },
     {
       "type": "message",
@@ -79,7 +80,7 @@
     {
       "type": "message",
       "speaker": "主人公(心の声)",
-      "text": "あれから僕らは旅行三昧だ。"
+      "text": "あれから僕らは{{travel_destination}}をはじめとして旅行三昧だ。"
     },
     {
       "type": "message",
@@ -94,7 +95,7 @@
     {
       "type": "message",
       "speaker": "system",
-      "text": "GAME CLEAR"
+      "text": "『{{judgment_reason}}』\n\nGAME CLEAR"
     }
   ]
 }

@@ -7,6 +7,7 @@ import android.util.Log
 import com.secretlovemode.data.model.GameState
 import com.secretlovemode.data.model.Scenario
 import com.secretlovemode.data.model.ScenarioFile
+import com.secretlovemode.util.LanguageManager
 import kotlinx.serialization.json.Json
 
 object ScenarioManager {
@@ -39,7 +40,7 @@ object ScenarioManager {
         }
 
         return try {
-            val fileName = "session$scenarioId.json"
+            val fileName = LanguageManager.getScenarioFileName(context, "session$scenarioId")
             Log.d(TAG, "Loading scenario: $fileName")
             val jsonString = context.assets.open(fileName).reader(Charsets.UTF_8).use { it.readText() }
             val scenarioFile = json.decodeFromString<ScenarioFile>(jsonString)

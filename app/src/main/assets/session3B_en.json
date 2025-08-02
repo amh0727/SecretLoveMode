@@ -1,0 +1,87 @@
+{
+  "title": "Starting Development from Requirements Definition",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Let’s start by clearly defining the requirements. First, we should figure out what features we need and what users want to do before diving into development."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Requirements definition! That makes sense—it’s better to be clear about what we’re making first♪",
+      "images": "assets/images/megumi_lab_happy_pc.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "But... when building an app, what kinds of things should we be thinking about?",
+      "images": "assets/images/megumi_lab_questioning.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "We start by clarifying: 'who' is going to use it, 'for what purpose,' and 'how' they’ll use it. Let’s think about the target users and their use cases first, and then define the features."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "I see! That definitely sounds better than just jumping into coding without a plan♪",
+      "images": "assets/images/megumi_lab_excited_pc.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Megumi’s really getting the mindset of development. Nice job, requirements definition!!"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "The two of them continued discussing requirement definition techniques and the basics of app design. Their structured approach was starting to pay off."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thanks to you, {{playerName}}-senpai, I’m starting to understand the whole app development process♪ It feels reassuring to organize everything first!",
+      "images": "assets/images/megumi_lab_excited_pc.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Now that we’ve nailed down the requirements, let’s move on to implementation. Want to try writing some code together, Megumi?"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yes! I’d love to try. But... can we work somewhere a little more focused?",
+      "images": "assets/images/megumi_lab_questioning_pc.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "I’m so glad Megumi’s feeling motivated. At this rate, we’re going to make a great app."
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "A perfect chance to be alone together! Where should you work?",
+      "options": [
+        {
+          "text": "In Nara Park, surrounded by nature",
+          "affectionChange": 10,
+          "next": "4A"
+        },
+        {
+          "text": "In a quiet, focused café",
+          "affectionChange": 5,
+          "next": "4B"
+        },
+        {
+          "text": "In the lab at night",
+          "affectionChange": -20,
+          "next": "4C"
+        }
+      ]
+    }
+  ]
+}

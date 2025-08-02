@@ -1,0 +1,209 @@
+{
+  "title": "Lab Trip Day - M1GP",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "At the end of July, the long-awaited lab trip day has arrived. The presentation venue for the M1GP, held at a seaside resort hotel, is filled with excitement from the lab members.",
+      "images": "assets/images/labtrip_general.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "It’s finally Megumi-chan’s presentation… the travel SNS app we built together. I wonder if she’s nervous."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "We stayed up late every day fixing bugs together... I was truly amazed by how much she grew."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "And today... after the BBQ, I’ve made up my mind. I’m going to confess my feelings to Megumi-chan. No more hesitation, no matter the result."
+    },
+    {
+      "type": "message",
+      "speaker": "Professor",
+      "text": "Now then, let’s have the presentation from {{playerName}} and Megumi.",
+      "images": "assets/images/professor_resort_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yes! We developed 'TravelConnect', a travel SNS app exclusively for our lab members!",
+      "images": "assets/images/megumi_presentation_confident.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Megumi-chan is doing her best. But I can tell she’s a bit nervous..."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "With this app, you can share travel photos, recommend spots, and even create travel plans with everyone!",
+      "images": "assets/images/megumi_presentation_confident.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Megumi’s presentation was earnest, though her nervousness showed a little. The audience watched over her warmly."
+    },
+    {
+      "type": "message",
+      "speaker": "Momo",
+      "text": "That’s a pretty solid app! I can tell you guys put a lot into it~",
+      "images": "assets/images/Momo_resort_impressed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thank you so much♪ We faced a lot of issues during development, but {{playerName}}-senpai supported me and helped me relearn everything from the basics!",
+      "images": "assets/images/megumi_resort_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Megumi-chan... she mentioned me. But truly, the one who worked the hardest was her."
+    },
+    {
+      "type": "message",
+      "speaker": "Professor",
+      "text": "Great work. Now, I’ll announce the results of this year’s M1GP...",
+      "images": "assets/images/professor_resort_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Professor",
+      "text": "This year’s M1GP winners are... the pair Tanaka and Sato. The pair {{playerName}} and Megumi came in third place.",
+      "images": "assets/images/professor_resort_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Applause filled the room, but Megumi’s expression turned a little somber."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "I see... We didn’t win, did we...",
+      "images": "assets/images/megumi_resort_sad.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Megumi-chan, even third place is an amazing result! You really gave it your all!"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "{{playerName}}-senpai... thank you. But... our promised trip...",
+      "images": "assets/images/megumi_resort_sad.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "She’s thinking about the promised trip... But for me, the result doesn’t matter."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "After the M1GP presentation, the traditional evening BBQ party began. A pleasant ocean breeze blew as lab members celebrated everyone’s hard work."
+    },
+    {
+      "type": "message",
+      "speaker": "IkeN",
+      "text": "Megumi-chan, third place is still awesome! You were just a programming beginner when you joined, and now look how far you've come!",
+      "images": "assets/images/ikeN_bbq_impressed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thank you so much♪ At first, I really didn’t understand anything... But {{playerName}}-senpai taught me everything so kindly.",
+      "images": "assets/images/megumi_bbq_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "I remember Megumi-chan from the beginning... I was so nervous to even talk to her back then, but now being together like this feels so natural."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "By the way, {{playerName}}-senpai, do you remember our first conversation? I gave you a souvenir—Yuba manju.",
+      "images": "assets/images/megumi_bbq_nostalgic.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Of course I remember. Ever since then, your kindness has always comforted me."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Back then, I thought you were someone so far away... But now, we can share our emotions together like this.",
+      "images": "assets/images/megumi_bbq_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "She feels the same way... This is my chance. I’ll be brave."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Megumi-chan... if it’s okay, could I have a moment with just the two of us later?"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Eh... yes! Of course. Where should we talk?",
+      "images": "assets/images/megumi_bbq_curious.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "How about a walk by the beach? There’s something I want to tell you."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "While the BBQ party continued, {{playerName}} and Megumi quietly walked down to the beach. Moonlight shimmered on the waves, with the gentle sound of the tide in the background."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Though she said nothing, Megumi seemed to understand why she’d been called out—her face was slightly tense with anticipation."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "{{playerName}}-senpai... what did you want to talk about?",
+      "images": "assets/images/megumi_beach_nervous.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Alright, time to be honest like a man!"
+    },
+    {
+      "type": "text_input",
+      "speaker": "system",
+      "text": "Please enter your confession line",
+      "placeholder": "Tell her how you feel",
+      "keyInput": "confession"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "You told Megumi your feelings...",
+      "options": [
+        {
+          "text": "See the result",
+          "next": "7B"
+        }
+      ]
+    }
+  ]
+}

@@ -84,12 +84,12 @@
         },
         {
           "text": "集中できるカフェで",
-          "affectionChange": 20,
+          "affectionChange": 5,
           "next": "4B"
         },
         {
           "text": "夜中の研究室で",
-          "affectionChange": -15,
+          "affectionChange": -20,
           "next": "4C"
         }
       ]

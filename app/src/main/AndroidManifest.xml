@@ -29,6 +29,12 @@
         <activity
             android:name=".ui.game.FinalMessageActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.language.LanguageSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ranking.RankingActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

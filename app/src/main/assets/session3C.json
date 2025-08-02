@@ -10,7 +10,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "手書きと音読ですか？でも、基礎が大切なのは分かります！頑張ります♪",
-      "images": "assets/images/megumi_lab_determined.png"
+      "images": "assets/images/megumi_lab_determined_pc.png"
     },
     {
       "type": "message",
@@ -26,7 +26,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "「文の最後はセミコロン！！...」うーん、{{playerName}}先輩、これを声に出して読むのは恥ずかしいです...",
-      "images": "assets/images/megumi_lab_shy.png"
+      "images": "assets/images/megumi_lab_shy_pc.png"
     },
     {
       "type": "message",
@@ -47,7 +47,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "{{playerName}}先輩...私、ちゃんと覚えられてるんでしょうか？なんだか文字を写してるだけのような...",
-      "images": "assets/images/megumi_lab_worried.png"
+      "images": "assets/images/megumi_lab_worried_pc.png"
     },
     {
       "type": "message",
@@ -63,7 +63,7 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "はい...正直、手書きだとあまり理解が深まらなくて。実際にパソコンで動かしながら学びたいです。",
-      "images": "assets/images/megumi_lab_questioning.png"
+      "images": "assets/images/megumi_lab_questioning_pc.png"
     },
     {
       "type": "choice",
@@ -77,12 +77,12 @@
         },
         {
           "text": "集中できるカフェで",
-          "affectionChange": 20,
+          "affectionChange": -20,
           "next": "4B"
         },
         {
           "text": "夜中の研究室で",
-          "affectionChange": -15,
+          "affectionChange": 5,
           "next": "4C"
         }
       ]

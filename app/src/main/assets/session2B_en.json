@@ -1,0 +1,82 @@
+{
+  "title": "Place Name Shiritori App Proposal...?",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "How about an app called M1GPS that uses location info to play shiritori with place names? A game where you play shiritori using the names of places around your current location."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Shiritori with place names... that sounds fun! But I feel like I’ve heard something like that before...",
+      "images": "assets/images/megumi_lab_thinking.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Senior Nyama",
+      "text": "Hey, {{playerName}}! That’s the M1GPS idea I proposed last year! Don’t go stealing it!",
+      "images": "assets/images/Nyama_lab_angry.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Oh... crap. I totally forgot. That was the idea N’yama came up with last year..."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Ah, sorry! That was yours, wasn’t it, Senpai... I completely forgot."
+    },
+    {
+      "type": "message",
+      "speaker": "Senior Nyama",
+      "text": "Seriously... copying ideas...........................isn’t cool, you know.",
+      "images": "assets/images/Nyama_lab_disappointed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "But thanks to you, {{playerName}}-senpai, I’ve got some ideas now too! Thank you♪",
+      "images": "assets/images/megumi_lab_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Megumi-chan covered for me... she’s so kind. But man, what an embarrassing mistake."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Looking annoyed, Senior Nyama left the lab. As an awkward silence lingered, Megumi cheerfully continued the conversation."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Let’s work hard to create an original app of our own! Oh, and {{playerName}}-senpai... I’m a total beginner at programming, so where should I even start?",
+      "images": "assets/images/megumi_lab_questioning.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "What advice would you give to beginner programmer Megumi?",
+      "options": [
+        {
+          "text": "Just have Claude Code write it for you",
+          "affectionChange": 5,
+          "next": "3A"
+        },
+        {
+          "text": "Let’s define the requirements thoroughly and then build it",
+          "affectionChange": 10,
+          "next": "3B"
+        },
+        {
+          "text": "Start by copying programming syntax by hand to learn the basics",
+          "affectionChange": -20,
+          "next": "3C"
+        }
+      ]
+    }
+  ]
+}

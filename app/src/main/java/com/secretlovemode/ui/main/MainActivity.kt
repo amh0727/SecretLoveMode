@@ -22,7 +22,10 @@ import com.secretlovemode.ui.game.GameActivity
 import androidx.constraintlayout.widget.Group
 import kotlinx.coroutines.launch
 import com.secretlovemode.data.repository.ScenarioManager
+import com.secretlovemode.ui.language.LanguageSelectionActivity
+import com.secretlovemode.util.LanguageManager
 import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatDelegate
 
 
 class MainActivity : AppCompatActivity() {
@@ -71,16 +74,44 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        Log.d(TAG, "MainActivity onCreate called")
+        
+        // Force light mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        
+        // For testing: Clear language selection to always show language screen
+        // Only clear if we're not coming from LanguageSelectionActivity
+        val fromLanguageSelection = intent.getBooleanExtra("FROM_LANGUAGE_SELECTION", false)
+        if (!fromLanguageSelection) {
+            LanguageManager.clearLanguageSelection(this)
+        }
+        
+        // Always go to language selection first
+        if (!LanguageManager.isLanguageSelected(this)) {
+            Log.d(TAG, "Language not selected, redirecting to LanguageSelectionActivity")
+            val intent = Intent(this, LanguageSelectionActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+        
+        Log.d(TAG, "Language is selected: ${LanguageManager.getLanguage(this)}")
+        
         setContentView(R.layout.activity_main)
 
         PromptManager.loadPrompts(applicationContext)
         slmViewModel = (application as MyApplication).slmViewModel
 
         initializeViews()
+        initializeMultilingualUI()
         setupClickListeners()
         observeViewModel()
 
+        // Initially hide model selection and start button
         modelSelectionGroup.visibility = View.GONE
+        startButton.visibility = View.GONE
+        startButton.isEnabled = false
     }
 
     private fun initializeViews() {
@@ -93,6 +124,23 @@ class MainActivity : AppCompatActivity() {
         btnConfirmPlayerName = findViewById(R.id.btnConfirmPlayerName)
         modelSelectionGroup = findViewById(R.id.modelSelectionGroup)
         startButton = findViewById(R.id.startButton)
+    }
+
+    private fun initializeMultilingualUI() {
+        try {
+            // Update UI texts based on selected language
+            findViewById<TextView>(R.id.tvPlayerNameLabel)?.text = LanguageManager.getText(this, "player_name_label")
+            findViewById<EditText>(R.id.etPlayerName)?.hint = LanguageManager.getText(this, "name_hint")
+            findViewById<Button>(R.id.btnConfirmPlayerName)?.text = LanguageManager.getText(this, "confirm")
+            findViewById<TextView>(R.id.tvSelectModelLabel)?.text = LanguageManager.getText(this, "select_model_label")
+            findViewById<Button>(R.id.btnSelectModelFile)?.text = LanguageManager.getText(this, "select_model_file")
+            findViewById<Button>(R.id.btnClearSelection)?.text = LanguageManager.getText(this, "clear_selection")
+            findViewById<Button>(R.id.startButton)?.text = LanguageManager.getText(this, "start_game")
+            
+            Log.d(TAG, "Multilingual UI initialized successfully for MainActivity")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error initializing multilingual UI in MainActivity", e)
+        }
     }
 
     private fun setupClickListeners() {
@@ -108,46 +156,14 @@ class MainActivity : AppCompatActivity() {
                 etPlayerName.visibility = View.GONE
                 btnConfirmPlayerName.visibility = View.GONE
 
-                // Show model selection UI
+                // Show model selection UI in center
                 findViewById<androidx.constraintlayout.widget.Group>(R.id.modelSelectionGroup).visibility = View.VISIBLE
-                // Re-attach click listener for startButton after it becomes visible
-                startButton.setOnClickListener {
-                    Log.d(TAG, "Start button click listener attached (re-attached).")
-                    Log.d(TAG, "Start button clicked.")
-                    showLoadingUI(true)
-                    startButton.isEnabled = false
-
-                    val currentModelUri = slmViewModel.selectedModelUri.value
-                    Log.d(TAG, "Current model URI at click: $currentModelUri")
-
-                    lifecycleScope.launch {
-                        Log.d(TAG, "Attempting to initialize CharacterAi...")
-                        val modelUri = slmViewModel.selectedModelUri.value
-                        Log.d(TAG, "Model URI before check: $modelUri")
-                        if (modelUri != null) {
-                            val success = slmViewModel.initializeCharacterAi(contentResolver, modelUri)
-                            if (success) {
-                                // Load fixed scenario after model is ready
-                                // ScenarioManager.loadScenarios(applicationContext, fixedCharacter.scenarioFileName)
-
-                                val intent = Intent(this@MainActivity, GameActivity::class.java)
-                                intent.putExtra("PLAYER_NAME", slmViewModel.playerName.value)
-                                startActivity(intent)
-                                finish() // 메인 화면을 종료하여 뒤로 가기 시 다시 나타나지 않도록 함
-                            } else {
-                                showLoadingUI(false)
-                                startButton.isEnabled = true
-                                Toast.makeText(this@MainActivity, slmViewModel.loadingError.value ?: "モデルの読み込みに失敗しました。", Toast.LENGTH_LONG).show()
-                            }
-                        } else {
-                            showLoadingUI(false)
-                            startButton.isEnabled = true
-                            Toast.makeText(this@MainActivity, "モデルファイルが選択されていません。", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
+                
+                // Start button remains hidden until model is selected
+                startButton.visibility = View.GONE
+                startButton.isEnabled = false
             } else {
-                Toast.makeText(this, "플레이어 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, LanguageManager.getText(this, "enter_player_name"), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -193,7 +209,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     showLoadingUI(false)
                     startButton.isEnabled = true
-                    Toast.makeText(this@MainActivity, "モデルファイルが選択されていません。", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, LanguageManager.getText(this@MainActivity, "no_model_selected"), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -218,18 +234,18 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "Selected URI observed: $uri")
             if (uri != null) {
                 try {
-                    val fileName = getFileNameFromUri(uri) ?: "選択されたファイル"
-                    tvSelectedModelFile.text = fileName
+                    val fileName = getFileNameFromUri(uri) ?: LanguageManager.getText(this, "model_selected")
+                    tvSelectedModelFile.text = "${LanguageManager.getText(this, "model_selected")} $fileName"
                     Log.d(TAG, "Updated selected file name: $fileName")
                 } catch (e: SecurityException) {
                     Log.w(TAG, "SecurityException accessing URI: ${e.message}")
-                    tvSelectedModelFile.text = "選択されたモデル"
+                    tvSelectedModelFile.text = LanguageManager.getText(this, "model_selected")
                 } catch (e: Exception) {
                     Log.w(TAG, "Error accessing URI: ${e.message}")
-                    tvSelectedModelFile.text = "選択されたファイル"
+                    tvSelectedModelFile.text = LanguageManager.getText(this, "model_selected")
                 }
             } else {
-                tvSelectedModelFile.text = "未選択"
+                tvSelectedModelFile.text = LanguageManager.getText(this, "not_selected")
             }
             updateButtonStates()
         }
@@ -265,9 +281,14 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "updateButtonStates: isModelSelected=$isModelSelected, isModelReady=$isModelReady, isModelLoading=$isModelLoading")
 
-        // Start game: Enabled when model is selected and not loading
-        startButton.isEnabled = isModelSelected && !isModelLoading
-        startButton.visibility = if (isModelSelected) View.VISIBLE else View.GONE
+        // Start game: Only visible and enabled when model is selected and not loading
+        if (isModelSelected && !isModelLoading) {
+            startButton.visibility = View.VISIBLE
+            startButton.isEnabled = true
+        } else {
+            startButton.visibility = View.GONE
+            startButton.isEnabled = false
+        }
 
         // Clear selection: Enabled if model is selected
         btnClearSelection.isEnabled = isModelSelected
@@ -305,9 +326,4 @@ class MainActivity : AppCompatActivity() {
         }
         return fileName
     }
-
-    
-
-
-
 }

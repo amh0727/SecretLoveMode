@@ -2,6 +2,7 @@ package com.secretlovemode.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.secretlovemode.util.LanguageManager
 import java.io.IOException
 
 object PromptManager {
@@ -35,7 +36,8 @@ object PromptManager {
 
             getValueFromJson(jsonString, "affectionJudgePrompt").takeIf { it.isNotEmpty() }?.let {
                 affectionJudgePrompt = try {
-                    context.assets.open(it).bufferedReader().use { reader -> reader.readText() }
+                    val fileName = LanguageManager.getPromptFileName(context, it.removeSuffix(".txt"))
+                    context.assets.open(fileName).bufferedReader().use { reader -> reader.readText() }
                 } catch (e: IOException) {
                     Log.e("PromptManager", "Failed to load affectionJudgePrompt from $it", e)
                     null
@@ -44,7 +46,8 @@ object PromptManager {
 
             getValueFromJson(jsonString, "confessionPrompt").takeIf { it.isNotEmpty() }?.let {
                 confessionPrompt = try {
-                    context.assets.open(it).bufferedReader().use { reader -> reader.readText() }
+                    val fileName = LanguageManager.getPromptFileName(context, it.removeSuffix(".txt"))
+                    context.assets.open(fileName).bufferedReader().use { reader -> reader.readText() }
                 } catch (e: IOException) {
                     Log.e("PromptManager", "Failed to load confessionPrompt from $it", e)
                     null

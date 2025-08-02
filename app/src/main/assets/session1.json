@@ -4,7 +4,9 @@
     {
       "type": "message",
       "speaker": "system",
-      "text": "6月上旬、梅雨空の下で行われた定例ゼミが終了した。今日は待ちに待ったM1GP（M1グランプリ）のペア発表の日だ。"
+      "text": "6月上旬、梅雨空の下で行われた定例ゼミが終了した。今日は待ちに待ったM1GP（M1グランプリ）のペア発表の日だ。",
+      "images": "assets/images/lab_first.png"
+
     },
     {
       "type": "message",
@@ -47,7 +49,8 @@
     {
       "type": "message",
       "speaker": "教授",
-      "text": "研究室旅行は7月末なので、それまでに何か動くものを作ってください。発表は旅行先で行います。それでは、解散！"
+      "text": "研究室旅行は7月末なので、それまでに何か動くものを作ってください。発表は旅行先で行います。それでは、解散！",
+      "images": "assets/images/professor_lab_normal.png"
     },
     {
       "type": "message",
@@ -58,12 +61,12 @@
       "type": "message",
       "speaker": "めぐみ",
       "text": "あ、そうそう！{{playerName}}先輩、これ良かったらどうぞ♪ 先週末に日光に行った時のお土産です。",
-      "images": "assets/images/megumi_lab_normal.png"
+      "images": "assets/images/megumi_lab_happy.png"
     },
     {
       "type": "message",
       "speaker": "めぐみ",
-      "text": "湯波まんじゅうなんです。すごく美味しかったので、研究室のみんなにも買ってきちゃいました。",
+      "text": "温泉まんじゅうなんです。すごく美味しかったので、研究室のみんなにも買ってきちゃいました。",
       "images": "assets/images/megumi_lab_happy_omiyage.png"
     },
     {

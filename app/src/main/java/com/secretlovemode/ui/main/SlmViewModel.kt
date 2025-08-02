@@ -172,6 +172,15 @@ class SlmViewModel(application: Application) : AndroidViewModel(application) {
         _gameState.value = currentState.copy(sectionSummaries = sectionSummaries)
         Log.d("SlmViewModel", "Updated section summaries: ${sectionSummaries.keys}")
     }
+    
+    /**
+     * 고백 판정 이유를 GameState에 저장
+     */
+    fun setConfessionJudgmentReason(reason: String) {
+        val currentState = _gameState.value ?: return
+        _gameState.value = currentState.copy(confessionJudgmentReason = reason)
+        Log.d("SlmViewModel", "Set confession judgment reason: $reason")
+    }
 
     /**
      * [MODIFIED] This is the correct place to close resources.

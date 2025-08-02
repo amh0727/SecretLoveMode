@@ -42,7 +42,23 @@
                     android:gravity="center_vertical"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/fabHistory"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <!-- 대화 이력 버튼 - 하트 옆에 위치 -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabHistory"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_history"
+                    app:fabSize="mini"
+                    app:backgroundTint="#FFB6C1"
+                    app:tint="@android:color/white"
+                    app:elevation="4dp"
+                    app:maxImageSize="20dp"
                     app:layout_constraintEnd_toStartOf="@+id/heartContainer"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
             <!-- 하트 아이콘 컨테이너 -->
@@ -58,8 +74,8 @@
 
                 <ImageView
                         android:id="@+id/ivHeartIcon"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:src="@drawable/ic_heart"
                         android:scaleType="centerInside"
                         app:layout_constraintStart_toStartOf="parent"
@@ -73,11 +89,11 @@
 
     </androidx.cardview.widget.CardView>
     
-    <!-- 캐릭터 이미지 카드 - 훨씬 큰 크기로 설정 -->
+    <!-- 캐릭터 이미지 카드 - 고정 높이로 설정 -->
     <androidx.cardview.widget.CardView
             android:id="@+id/characterCard"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="480dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -86,9 +102,7 @@
             app:cardBackgroundColor="@android:color/white"
             app:layout_constraintTop_toBottomOf="@+id/statusCard"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/currentMessageCard"
-            app:layout_constraintHeight_percent="0.68">
+            app:layout_constraintEnd_toEndOf="parent">
 
         <!-- 단일 ImageView로 전체 이미지 처리 - 더 큰 크기 -->
         <ImageView
@@ -140,18 +154,18 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:minHeight="100dp"
+            android:minHeight="80dp"
             app:cardCornerRadius="28dp"
             app:cardElevation="12dp"
             app:cardBackgroundColor="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@+id/choiceScrollView"
+            app:layout_constraintTop_toBottomOf="@+id/characterCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="24dp">
+                android:padding="16dp">
 
             <!-- 현재 대화 텍스트 - 더 큰 폰트와 세련된 스타일 -->
             <TextView
@@ -174,34 +188,22 @@
 
     </androidx.cardview.widget.CardView>
     
-    <!-- 대화 이력 아이콘 버튼 (우상단) -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabHistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_history"
-            app:fabSize="mini"
-            app:backgroundTint="#FFB6C1"
-            app:tint="@android:color/white"
-            app:elevation="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/statusCard"
-            app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- 대화 이력 아이콘 버튼 (statusCard 내부로 이동) -->
     
-    <!-- 선택지 컨테이너 - 자연스럽고 우아한 디자인 -->
+    <!-- 선택지 컨테이너 - 메시지 카드 아래 배치 -->
     <ScrollView
             android:id="@+id/choiceScrollView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="12dp"
             android:fillViewport="true"
-            android:maxHeight="280dp"
             android:nestedScrollingEnabled="true"
             android:background="@drawable/conversation_header_gradient"
             android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/currentMessageCard"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -211,16 +213,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="4dp">
 
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/questionButton1"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:minHeight="68dp"
-                    android:padding="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:text="選択肢 1"
                     android:textColor="#1A1A1A"
                     android:textSize="16sp"
@@ -238,9 +240,9 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:minHeight="68dp"
-                    android:padding="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:text="選択肢 2"
                     android:textColor="#1A1A1A"
                     android:textSize="16sp"
@@ -258,9 +260,9 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:minHeight="68dp"
-                    android:padding="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:text="選択肢 3"
                     android:textColor="#1A1A1A"
                     android:textSize="16sp"
@@ -458,29 +460,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:visibility="visible">
 
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="32dp"
-                android:gravity="center">
-
-            <ProgressBar
-                    android:id="@+id/loadingProgressBar"
-                    style="?android:attr/progressBarStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:indeterminateTint="#FF6B9D"/>
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="読み込み中..."
-                    android:textColor="#2C3E50"
-                    android:textSize="14sp"/>
-
-        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
