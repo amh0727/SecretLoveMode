@@ -2,151 +2,465 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
                                                    xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/main"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    android:background="@color/background_light"
-                                                   tools:context=".GameActivity">
+                                                   android:fitsSystemWindows="true"
+                                                   tools:context=".ui.game.GameActivity">
 
-    <!-- 캐릭터 이름 -->
-    <TextView
-            android:id="@+id/tvCharacterName"
-            style="@style/GameTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="キャラクター名"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- 상태 표시 카드 -->
-    <LinearLayout
+    <!-- 상태 표시 카드 - 축소 -->
+    <androidx.cardview.widget.CardView
             android:id="@+id/statusCard"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/status_card_background"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="12dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCharacterName">
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-                android:id="@+id/tvAffinity"
-                style="@style/StatusText.Affinity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="好感度: 50" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="12dp">
 
+            <TextView
+                    android:id="@+id/tvCharacterName"
+                    style="@style/GameTitleText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="現在のシナリオ"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:gravity="center_vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/fabHistory"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <!-- 대화 이력 버튼 - 하트 옆에 위치 -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabHistory"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_history"
+                    app:fabSize="mini"
+                    app:backgroundTint="#FFB6C1"
+                    app:tint="@android:color/white"
+                    app:elevation="4dp"
+                    app:maxImageSize="20dp"
+                    app:layout_constraintEnd_toStartOf="@+id/heartContainer"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <!-- 하트 아이콘 컨테이너 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/heartContainer"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/heart_background"
+                    android:padding="3dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
-    </LinearLayout>
+                <ImageView
+                        android:id="@+id/ivHeartIcon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_heart"
+                        android:scaleType="centerInside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <!-- 캐릭터 이미지 -->
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+    
+    <!-- 캐릭터 이미지 카드 - 고정 높이로 설정 -->
     <androidx.cardview.widget.CardView
             android:id="@+id/characterCard"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
+            android:layout_height="480dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="16dp"
+            app:cardBackgroundColor="@android:color/white"
             app:layout_constraintTop_toBottomOf="@+id/statusCard"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/conversationCard"
-            app:layout_constraintHeight_percent="0.25">  <!-- 이 값을 0.3 또는 0.25 등으로 줄여보세요 -->
+            app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- 단일 ImageView로 전체 이미지 처리 - 더 큰 크기 -->
         <ImageView
                 android:id="@+id/ivCharacter"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/character_image_pre"
-                android:background="@color/conversation_background"/>
+                android:layout_margin="2dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="false"
+                android:background="@drawable/character_image_background"
+                android:clipToOutline="true"/>
+
+        <!-- 블러 배경 이미지들 (숨김 처리) -->
+        <ImageView
+                android:id="@+id/ivBackgroundLeft"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+
+        <ImageView
+                android:id="@+id/ivBackgroundRight"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+
+        <!-- 思考中 텍스트 오버레이 -->
+        <TextView
+                android:id="@+id/tvThinkingOverlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="思考中…"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:background="#80000000"
+                android:padding="16dp"
+                android:elevation="10dp"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
+
     </androidx.cardview.widget.CardView>
 
-    <!-- 대화 카드 -->
-
-    <!-- 선택지 컨테이너 (동적 크기) -->
+    <!-- 현재 메시지 카드 - 더 세련되고 큰 디자인 -->
     <androidx.cardview.widget.CardView
-            android:id="@+id/conversationCard"
+            android:id="@+id/currentMessageCard"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/choiceContainer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:minHeight="80dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@android:color/white"
             app:layout_constraintTop_toBottomOf="@+id/characterCard"
-            app:layout_constraintHeight_percent="0.19">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <ScrollView
-                    android:id="@+id/scrollViewConversation"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/conversation_background"
-                    android:padding="2dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
 
-    <TextView
-            android:id="@+id/tvConversation"
-            style="@style/ConversationText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/conversation_background"
-            android:padding="10dp"
-            android:text="会話が始まります...\n\n"/>
+            <!-- 현재 대화 텍스트 - 더 큰 폰트와 세련된 스타일 -->
+            <TextView
+                    android:id="@+id/tvCurrentMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textColor="#1A1A1A"
+                    android:lineSpacingExtra="8dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:text=""
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-</ScrollView>
-        </androidx.cardview.widget.CardView>
-    <LinearLayout
-            android:id="@+id/choiceContainer"
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+    
+    <!-- 대화 이력 아이콘 버튼 (statusCard 내부로 이동) -->
+    
+    <!-- 선택지 컨테이너 - 메시지 카드 아래 배치 -->
+    <ScrollView
+            android:id="@+id/choiceScrollView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="4dp"
-            android:orientation="vertical"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="12dp"
+            android:fillViewport="true"
+            android:nestedScrollingEnabled="true"
+            android:background="@drawable/conversation_header_gradient"
             android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/currentMessageCard"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.0">
+            app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-                android:id="@+id/questionButton1"
-                style="@style/ChoiceButton"
+        <LinearLayout
+                android:id="@+id/choiceContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="56dp"
-                android:text="選択肢 1"/>
+                android:orientation="vertical"
+                android:padding="4dp">
 
-        <Button
-                android:id="@+id/questionButton2"
-                style="@style/ChoiceButton"
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/questionButton1"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:text="選択肢 1"
+                    android:textColor="#1A1A1A"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    app:cornerRadius="24dp"
+                    app:strokeColor="#FFB6C1"
+                    app:strokeWidth="2dp"
+                    app:backgroundTint="@android:color/white"
+                    app:rippleColor="#FFE4E1"
+                    android:elevation="4dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/questionButton2"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:text="選択肢 2"
+                    android:textColor="#1A1A1A"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    app:cornerRadius="24dp"
+                    app:strokeColor="#FFB6C1"
+                    app:strokeWidth="2dp"
+                    app:backgroundTint="@android:color/white"
+                    app:rippleColor="#FFE4E1"
+                    android:elevation="4dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/questionButton3"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:text="選択肢 3"
+                    android:textColor="#1A1A1A"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    app:cornerRadius="24dp"
+                    app:strokeColor="#FFB6C1"
+                    app:strokeWidth="2dp"
+                    app:backgroundTint="@android:color/white"
+                    app:rippleColor="#FFE4E1"
+                    android:elevation="4dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnConfess"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:minWidth="240dp"
+                    android:minHeight="64dp"
+                    android:paddingStart="36dp"
+                    android:paddingEnd="36dp"
+                    android:text="告白する"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    app:backgroundTint="#FF69B4"
+                    app:cornerRadius="32dp"
+                    app:elevation="12dp"
+                    app:icon="@drawable/ic_heart"
+                    app:iconPadding="12dp"
+                    app:iconTint="@android:color/white"
+                    app:rippleColor="#FFB6C1"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 섹션 전환 오버레이 -->
+    <androidx.cardview.widget.CardView
+            android:id="@+id/sectionTransitionOverlay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:visibility="gone"
+            android:elevation="200dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="16dp"
+            app:cardBackgroundColor="#CC000000"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+                android:id="@+id/tvSectionTransition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="56dp"
-                android:text="選択肢 2"/>
+                android:padding="24dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:text="섹션 전환 메시지" />
 
-        <Button
-                android:id="@+id/questionButton3"
-                style="@style/ChoiceButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="56dp"
-                android:text="選択肢 3"/>
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 대화 이력 오버레이 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/historyOverlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#CC000000"
+            android:visibility="gone"
+            android:elevation="150dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 대화 이력 카드 -->
+        <androidx.cardview.widget.CardView
+                android:id="@+id/historyCard"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="80dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp">
+
+                <!-- 제목 -->
+                <TextView
+                        android:id="@+id/tvHistoryTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="対話履歴"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A1A"
+                        android:gravity="center"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/btnCloseHistory"/>
+
+                <!-- 닫기 버튼 -->
+                <ImageButton
+                        android:id="@+id/btnCloseHistory"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_close"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="닫기"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                <!-- 섹션별 대화 이력 스크롤뷰 -->
+                <ScrollView
+                        android:id="@+id/scrollViewHistoryContent"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="16dp"
+                        android:fillViewport="true"
+                        app:layout_constraintTop_toBottomOf="@+id/tvHistoryTitle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                    <LinearLayout
+                            android:id="@+id/historyContentLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp">
+
+                        <!-- 섹션별 대화 이력이 여기에 동적으로 추가됨 -->
+                        <TextView
+                                android:id="@+id/tvHistoryContent"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="#2C3E50"
+                                android:lineSpacingExtra="4dp"
+                                android:text="대화 이력이 없습니다."/>
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 파티클 뷰 - 모든 UI 위에 표시 -->
+    <com.secretlovemode.ui.common.ParticleView
+            android:id="@+id/particleView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="100dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 로딩 프로그레스바 - 더 예쁘게 -->
+    <androidx.cardview.widget.CardView
+            android:id="@+id/loadingProgressCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible">
+
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

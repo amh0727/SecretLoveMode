@@ -4,21 +4,26 @@ import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-//pull test
+import com.secretlovemode.data.repository.PromptManager
+import com.secretlovemode.ui.main.SlmViewModel
+
+// Implements ViewModelStoreOwner to follow standard ViewModel lifecycle.
 class MyApplication : Application(), ViewModelStoreOwner {
 
-    override fun onCreate(){
+    override fun onCreate() {
         super.onCreate()
-        ScenarioManager.loadScenarios(this)
+        // Load prompts when the application starts.
+        PromptManager.loadPrompts(this)
     }
 
+    // Creates a ViewModelStore to store ViewModels.
     override val viewModelStore: ViewModelStore by lazy {
         ViewModelStore()
     }
 
-    // 앱 전체에서 공유될 SlmViewModel 인스턴스
-    val SlmViewModel: SlmViewModel by lazy {
-        // ViewModelProvider에 ViewModelStoreOwner인 'this'(MyApplication)를 전달합니다.
+    // ViewModel instance shared across the entire app.
+    // This ensures that only one ViewModel instance exists as long as the app is alive.
+    val slmViewModel: SlmViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(this)

@@ -1,0 +1,109 @@
+{
+  "title": "Working in Nara Park",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Let’s work while enjoying nature in Nara Park. A change of scenery might help spark some good ideas."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Working in nature sounds lovely♪ But... I’m not sure it’s the best place for coding. Will we be okay?",
+      "images": "assets/images/megumi_park_questioning.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Well, sometimes it's good to shake things up a bit..."
+    },
+    {
+      "type": "message",
+      "speaker": "N山先輩",
+      "text": "Huh? {{playerName}} and Megumi-chan! What are you two doing out here?",
+      "images": "assets/images/Nyama_park_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Standing next to N-Senpai is an unfamiliar woman, holding his arm. It seems like he’s on a date."
+    },
+    {
+      "type": "message",
+      "speaker": "N山先輩",
+      "text": "Wait a sec—are you two on a date? How cute~♪",
+      "images": "assets/images/Nyama_park_teasing.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "W-Well... it’s not like that...",
+      "images": "assets/images/megumi_park_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "He called it a date... Not that I mind. And Megumi didn’t totally deny it either..."
+    },
+    {
+      "type": "message",
+      "speaker": "N山先輩",
+      "text": "There are a bunch of deer over there. Since you're here, why not go take a look?",
+      "images": "assets/images/Nyama_park_pointing.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "N-Senpai sure knows a lot about Nara Park..."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "We really look like a couple, huh!",
+      "images": "assets/images/megumi_park_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "A couple... My heart's pounding. Megumi doesn’t seem to hate the idea either."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "That was a nice little refresh. Since we’re out anyway, maybe we should grab dinner together."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Great job today, Megumi! Want to grab something to eat together?"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yes♪ I’d love to! Eating with you, {{playerName}}-senpai, sounds kind of exciting.",
+      "images": "assets/images/megumi_park_happy.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "Where should you eat?",
+      "options": [
+        {
+          "text": "Convenience store food",
+          "affectionChange": 10,
+          "next": "5A"
+        },
+        {
+          "text": "Yoshinoya (beef bowl chain)",
+          "affectionChange": -5,
+          "next": "5B"
+        },
+        {
+          "text": "A cozy izakaya (Japanese pub)",
+          "affectionChange": 20,
+          "next": "5C"
+        }
+      ]
+    }
+  ]
+}

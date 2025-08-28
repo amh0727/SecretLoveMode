@@ -1,0 +1,143 @@
+{
+  "title": "吉野家で晩御飯",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "吉野家にしよう。安いし、早いし、牛丼美味しいしね。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "吉野家ですか...確かに手軽でいいですね。",
+      "images": "assets/images/megumi_yoshinoya_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "二人は吉野家に入り、席に座って牛丼を注文した。"
+    },
+    {
+      "type": "message",
+      "speaker": "上D",
+      "text": "あ！{{playerName}}くんとめぐみちゃん！奇遇だね〜",
+      "images": "assets/images/ueD_yoshinoya_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "上Dさん！お疲れ様です。"
+    },
+    {
+      "type": "message",
+      "speaker": "上D",
+      "text": "めぐみちゃ〜ん、研究やってる？一緒に学会でマカオ行こうや〜♪",
+      "images": "assets/images/megumi_yoshinoya_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "マカオですか！？すごいですね、行けるように研究頑張ります！",
+      "images": "assets/images/megumi_yoshinoya_amazed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "上Dさん、さすが博士課程...研究に真っ直ぐで憧れるな。"
+    },
+    {
+      "type": "message",
+      "speaker": "上D",
+      "text": "よし、今日は俺が奢るよ！後輩の分も含めて〜",
+      "images": "assets/images/ueD_yoshinoya_generous.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "三人で楽しく食事をしていると、突然上Dさんがスマホを見て顔面蒼白になった。"
+    },
+    {
+      "type": "message",
+      "speaker": "上D",
+      "text": "やべ！今の時間、会社の最終面接だった！！",
+      "images": "assets/images/ueD_yoshinoya_panicked.png"
+    },
+    {
+      "type": "message",
+      "speaker": "上D",
+      "text": "ごめん！急いで行かなきゃ！お金はもう払ったから！",
+      "images": "assets/images/ueD_yoshinoya_rushing.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "上Dさんは慌てて吉野家から飛び出していった。結果的にご飯代を奢ってもらうことになってしまった。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "上Dさん、すごく慌ててましたね...面接、間に合うといいんですけど。",
+      "images": "assets/images/megumi_yoshinoya_worried.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "そうだね。まぁ，...切り替えて話の続きをしよう。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "はい♪ そういえば、さっきの旅行の話ですけど...{{playerName}}先輩はどこに行きたいですか？",
+      "images": "assets/images/megumi_yoshinoya_questioning.png"
+    },
+    {
+      "type": "text_input",
+      "speaker": "system",
+      "text": "どこに旅行したいか教えてください",
+      "placeholder": "行きたい場所を入力してください",
+      "keyInput": "travel_destination"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "やったー♪ 約束ですよ！絶対にM1GPで優勝して、{{playerName}}先輩と旅行に行きます！",
+      "images": "assets/images/megumi_yoshinoya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃんがこんなに喜んでくれるなんて...僕も頑張って、彼女をしっかりサポートしなければ。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "うん、約束だ！僕もメンターとして、めぐみちゃんが優勝できるように全力でサポートするよ。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "ありがとうございます♪ {{playerName}}先輩と一緒なら、きっと素敵なアプリが作れそうです！",
+      "images": "assets/images/megumi_yoshinoya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "上Dさんのハプニングもあったが、結果的に二人の距離は縮まった。M1GPでの優勝と約束の旅行という新たな目標ができ、二人の想いはさらに深まっていく..."
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "時は過ぎ、ついに研究室旅行とM1GP発表の日がやってきた...",
+      "options": [
+        {
+          "text": "M1GP発表会に参加する（高い好感度で優勝を目指す）",
+          "next": "6A"
+        },
+        {
+          "text": "M1GP発表会に参加する（普通の結果を受け入れる）",
+          "next": "6B"
+        }
+      ]
+    }
+  ]
+}

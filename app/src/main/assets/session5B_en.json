@@ -1,0 +1,143 @@
+{
+  "title": "Dinner at Yoshinoya",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Let’s go to Yoshinoya. It’s cheap, fast, and their beef bowls are delicious."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yoshinoya, huh... It is convenient, I guess.",
+      "images": "assets/images/megumi_yoshinoya_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "They entered Yoshinoya, took their seats, and ordered beef bowls."
+    },
+    {
+      "type": "message",
+      "speaker": "UeD",
+      "text": "Hey! {{playerName}}-kun and Megumi-chan! What a coincidence~",
+      "images": "assets/images/ueD_yoshinoya_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "UeD-san! Good evening."
+    },
+    {
+      "type": "message",
+      "speaker": "UeD",
+      "text": "Megumi-chaaaan, are you making progress on your research? Let’s go present at a conference in Macau together~♪",
+      "images": "assets/images/megumi_yoshinoya_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Macau!? That sounds amazing. I’ll work hard on my research so I can go!",
+      "images": "assets/images/megumi_yoshinoya_amazed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "As expected of UeD-san, a PhD student… So dedicated to his research. I admire that."
+    },
+    {
+      "type": "message",
+      "speaker": "UeD",
+      "text": "Alright, tonight’s meal is on me! I’ll treat both of you~",
+      "images": "assets/images/ueD_yoshinoya_generous.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "As the three of them enjoyed their meal, UeD-san suddenly looked pale while checking his phone."
+    },
+    {
+      "type": "message",
+      "speaker": "UeD",
+      "text": "Oh no! My final job interview was scheduled for this time!!",
+      "images": "assets/images/ueD_yoshinoya_panicked.png"
+    },
+    {
+      "type": "message",
+      "speaker": "UeD",
+      "text": "Sorry! I’ve gotta run! I already paid for the meal!",
+      "images": "assets/images/ueD_yoshinoya_rushing.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "UeD-san dashed out of Yoshinoya in a panic. In the end, the meal was on him."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "He looked really panicked... I hope he makes it to his interview in time.",
+      "images": "assets/images/megumi_yoshinoya_worried.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Yeah... Well, let’s shift gears and continue our conversation."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Sure♪ By the way, about that trip we were talking about earlier... Where would you like to go, {{playerName}}-senpai?",
+      "images": "assets/images/megumi_yoshinoya_questioning.png"
+    },
+    {
+      "type": "text_input",
+      "speaker": "system",
+      "text": "Where would you like to travel to?",
+      "placeholder": "Enter your dream destination",
+      "keyInput": "travel_destination"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yay♪ It’s a promise! I’ll definitely win the M1GP and go on that trip with you, {{playerName}}-senpai!",
+      "images": "assets/images/megumi_yoshinoya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "She looks so happy... I need to give it my all and support her the best I can."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Absolutely. It’s a promise! As your mentor, I’ll support you all the way to victory."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thank you♪ With you by my side, {{playerName}}-senpai, I know we can make a great app!",
+      "images": "assets/images/megumi_yoshinoya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Despite the chaos caused by UeD-san, the evening brought Megumi and {{playerName}} closer. With a new goal—winning the M1GP and going on their promised trip—their bond continues to deepen..."
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "Time passes... and the day of the lab trip and M1GP presentation finally arrives.",
+      "options": [
+        {
+          "text": "Attend the M1GP presentation (aim for victory with high affection)",
+          "next": "6A"
+        },
+        {
+          "text": "Attend the M1GP presentation (accept an average outcome)",
+          "next": "6B"
+        }
+      ]
+    }
+  ]
+}

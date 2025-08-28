@@ -1,0 +1,15 @@
+{
+  "title": "ゲーム終了",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "物語は終わりを迎えました。あなたの選択が、めぐみとの関係を決定しました。"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "ゲームをプレイしていただきありがとうございます！"
+    }
+  ]
+}

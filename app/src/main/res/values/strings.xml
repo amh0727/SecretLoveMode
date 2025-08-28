@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">M1gp</string>
+    <string name="app_name">SecretLoveMode</string>
     <string-array name="model_files_array">
         <item>Gemma-3n-4B.task</item>
         <item>다른_모델_이름.task</item>

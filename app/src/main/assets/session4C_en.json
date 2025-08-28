@@ -1,0 +1,128 @@
+{
+  "title": "Working in the Lab Late at Night",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Voice)",
+      "text": "I'll work in the lab late at night. No one's here, so I can focus, and it'll just be the two of us..."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Working late at night, it feels like grad school, so exciting ♪",
+      "images": "assets/images/megumi_lab_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Voice)",
+      "text": "I thought it would just be the two of us, but..."
+    },
+    {
+      "type": "message",
+      "speaker": "Uda",
+      "text": "{{playerName}} Senpai, good work!",
+      "images": "assets/images/Uda_lab_greeting.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Kjo",
+      "text": "Whoo, woo-hoo!↑↑",
+      "images": "assets/images/Kjo_lab_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Kchi",
+      "text": "Ugh, I'm so tired. Hey Uda-kun, cigarette.",
+      "images": "assets/images/Kchi_lab_tired.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Uda",
+      "text": "Ah, I can't smoke right now.",
+      "images": "assets/images/Uda_lab_sad.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Tki",
+      "text": "I'm going too~",
+      "images": "assets/images/Tki_lab_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Voice)",
+      "text": "There are so many night owls here! My plan for just the two of us..."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Starting to work despite the disappointment. In the lab, they decided to develop using vim."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Um... I don't really understand this vim thing... How do I type text?",
+      "images": "assets/images/megumi_lab_confused.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Ah, vim is difficult at first, isn't it? First, press 'i' to enter Insert mode..."
+    },
+    {
+      "type": "message",
+      "speaker": "ShibaT",
+      "text": "Oh, you're using vim!",
+      "images": "assets/images/ShibaT_lab_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "ShibaT",
+      "text": "Megumi-chan, I'll teach you the tricks of vim~♪",
+      "images": "assets/images/ShibaT_lab_teaching.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thank you, ShibaT Senpai!",
+      "images": "assets/images/megumi_lab_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Voice)",
+      "text": "I'm kind of jealous... Seeing ShibaT teaching Megumi-chan makes me feel uneasy."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Hey, ShibaT! I'm Megumi's mentor! Work quietly!"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "The lab late at night was unexpectedly lively, creating an atmosphere where it was hard to concentrate on work. Megumi also seemed a bit bewildered."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "It's quite lively here, isn't it? It's getting late, so why don't we go get some food?",
+      "images": "assets/images/megumi_lab_tired_pc.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "I wanted to go to an izakaya, but they're closed late at night... Where should we eat?",
+      "options": [
+        {
+          "text": "Convenience store meal",
+          "affectionChange": 10,
+          "next": "5A"
+        },
+        {
+          "text": "Yoshinoya",
+          "affectionChange": -5,
+          "next": "5B"
+        }
+      ]
+    }
+  ]
+}

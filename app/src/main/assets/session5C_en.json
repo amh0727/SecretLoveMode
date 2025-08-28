@@ -1,0 +1,173 @@
+{
+  "title": "Dinner at an Izakaya",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Let’s go to an izakaya! It’s nice to enjoy a grown-up vibe and have a relaxed conversation."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "An izakaya?♪ That sounds so mature!",
+      "images": "assets/images/megumi_izakaya_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "They went to a nearby izakaya and sat at a quiet table. Surrounded by a calm atmosphere, they ordered drinks."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Can you drink, Megumi?"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Just a little♪ I like cocktails.",
+      "images": "assets/images/megumi_izakaya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Their drinks arrived, and they toasted. As the alcohol kicked in, their conversation grew more lively."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "{{playerName}}-senpai, you usually seem cool, but you’re actually very kind♪",
+      "images": "assets/images/megumi_izakaya_tipsy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Is she getting tipsy? She seems more relaxed than usual, which helps me loosen up too."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "You're always cheerful, Megumi. It’s fun being with you."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Ehehe♪ Thank you. I had a really great time today.",
+      "images": "assets/images/megumi_izakaya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "As the mood lightened, a complimentary dish was brought to their table."
+    },
+    {
+      "type": "message",
+      "speaker": "Server",
+      "text": "Here’s a little appetizer on the house~"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Wait a minute... That voice... Could it be...?"
+    },
+    {
+      "type": "message",
+      "speaker": "Hgon",
+      "text": "Oh! {{playerName}}-senpai and Megumi-chan!",
+      "images": "assets/images/Hgon_izakaya_working.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Hgon-kun!? You work here part-time?",
+      "images": "assets/images/megumi_izakaya_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "So you're working here? Thanks!!"
+    },
+    {
+      "type": "message",
+      "speaker": "Hgon",
+      "text": "Yep! Gotta save up some money... Enjoy your meal, you two♪",
+      "images": "assets/images/Hgon_izakaya_working.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Hgon went back to attending other customers. Grateful for the service, the two returned to their pleasant conversation."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thanks to Hgon-kun, I feel all warm and fuzzy now♪ By the way, {{playerName}}-senpai... If I win the M1GP, let’s go on a reward trip together!",
+      "images": "assets/images/megumi_izakaya_inviting.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Maybe it's the alcohol talking... But still, Megumi’s inviting me on a trip? That’s awesome!"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "That’s a great idea! Let’s do it!"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yay♪ So, {{playerName}}-senpai, where would you like to go?",
+      "images": "assets/images/megumi_izakaya_questioning.png"
+    },
+    {
+      "type": "text_input",
+      "speaker": "system",
+      "text": "Where would you like to travel to?",
+      "placeholder": "Enter your dream destination",
+      "keyInput": "travel_destination"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yay♪ It’s a promise! I’ll win the M1GP and go on that trip with you, {{playerName}}-senpai!",
+      "images": "assets/images/megumi_izakaya_determined.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Seeing Megumi-chan so happy... I need to do my best and support her properly."
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "It's a promise! As your mentor, I’ll do everything I can to help you win."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Thank you♪ With you by my side, {{playerName}}-senpai, I know we can build a great app!",
+      "images": "assets/images/megumi_izakaya_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "With the help of a little alcohol and Hgon’s surprise appearance, their bond grew even stronger. Now united by their goal of winning the M1GP and going on a trip, their hearts move forward together..."
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "Time passed, and the day of the lab trip and M1GP presentation finally arrived...",
+      "options": [
+        {
+          "text": "Attend the M1GP presentation (aim for victory with high affection)",
+          "next": "6A"
+        },
+        {
+          "text": "Attend the M1GP presentation (accept an average outcome)",
+          "next": "6B"
+        }
+      ]
+    }
+  ]
+}

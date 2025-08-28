@@ -1,0 +1,139 @@
+{
+  "title": "ドキドキM1GPのペア決め!",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "6月上旬、梅雨空の下で行われた定例ゼミが終了した。今日は待ちに待ったM1GP（M1グランプリ）のペア発表の日だ。",
+      "images": "assets/images/lab_first.png"
+
+    },
+    {
+      "type": "message",
+      "speaker": "教授",
+      "text": "それでは、M1GPのペア発表を行います。ペアになった二人は当日まで力を合わせて頑張ってください。",
+      "images": "assets/images/professor_lab_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "ドキドキする...実は僕は、今年入学してきたM1のめぐみちゃんのことが好きだ。一目惚れしまったが僕は先輩だから迂闊に話しかけられずにいる。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "ドキドキする...めぐみちゃんとペアになれるだろうか。でも、もしペアになれたら、M2の先輩として頼りがいのあるところを見せなければ。"
+    },
+    {
+      "type": "message",
+      "speaker": "教授",
+      "text": "kめぐみさんは...えーっと、{{playerName}}君ですね。よろしくお願いします。",
+      "images": "assets/images/professor_lab_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "え！？本当に！？夢じゃない！？めぐみちゃんと...めぐみちゃんとペアだ！"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "{{playerName}}先輩！よろしくお願いします♪ M1GPって何をすればいいのか全然分からないので、色々教えてくださいね！",
+      "images": "assets/images/megumi_lab_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "こ、こちらこそよろしく！頑張ろう、めぐみちゃん！"
+    },
+    {
+      "type": "message",
+      "speaker": "教授",
+      "text": "研究室旅行は7月末なので、それまでに何か動くものを作ってください。発表は旅行先で行います。それでは、解散！",
+      "images": "assets/images/professor_lab_normal.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "ゼミが終了し、研究室には{{playerName}}とめぐみだけが残された。他のメンバーは早々に帰宅の準備を始めている。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "あ、そうそう！{{playerName}}先輩、これ良かったらどうぞ♪ 先週末に日光に行った時のお土産です。",
+      "images": "assets/images/megumi_lab_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "温泉まんじゅうなんです。すごく美味しかったので、研究室のみんなにも買ってきちゃいました。",
+      "images": "assets/images/megumi_lab_happy_omiyage.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "また旅行に行ってたのか...めぐみちゃんって本当に旅行好きだな。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃんは旅行に行くたびにお土産を買って秘書室に置いておいてくれる。ubi-allでの連絡も欠かさない。素敵だ。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "ありがとう！いつも色んなところに行ってるよね。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "はい！旅行大好きなんです♪ 新しい場所に行くとワクワクしちゃって。あ、でもM1GPって何を作ればいいんですか？",
+      "images": "assets/images/megumi_lab_questioning.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "研究室旅行での自由開発だから、旅行先で役立つアプリとか、みんなで楽しめるツールを作る感じかな。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "なるほど〜！でも私アプリ開発初めてなので、何を作ればいいのか不安です．．．",
+      "images": "assets/images/megumi_lab_worried.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "めぐみちゃんが不安そうな顔をしてる。ここは先輩として頼りがいのあるところを見せなければ！"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "めぐみに提案するアプリのアイデアは？",
+      "options": [
+        {
+          "text": "みんなで旅行スポットを共有できるSNSアプリ",
+          "affectionChange": 20,
+          "next": "2A"
+        },
+        {
+          "text": "位置情報を使った地名しりとり(M1GPS)",
+          "affectionChange": 5,
+          "next": "2B"
+        },
+        {
+          "text": "ロケットを火星まで飛ばすゲーム",
+          "affectionChange": -10,
+          "next": "2C"
+        }
+      ]
+    },
+    {
+      "type": "input",
+      "speaker": "system",
+      "text": "めぐみに最後に伝えたいことを自由に入力してください。",
+      "requiresUserInput": true,
+      "next": "ending"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "title": "奈良公園での開発作業",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "奈良公園で自然を感じながら作業しよう。リフレッシュしながらやれば、いいアイデアが浮かぶかも。"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "自然の中での作業、素敵ですね♪ でも...コーディングには完全に不向きな気もしますが、大丈夫でしょうか？",
+      "images": "assets/images/megumi_park_questioning.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "まあ、たまには環境を変えてみるのも..."
+    },
+    {
+      "type": "message",
+      "speaker": "N山先輩",
+      "text": "あれ？{{playerName}}とめぐみちゃん！こんなところで何してるの？",
+      "images": "assets/images/Nyama_park_surprised.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "N山先輩の隣には、見知らぬ女性が腕を組んで立っている。どうやらデート中のようだ。"
+    },
+    {
+      "type": "message",
+      "speaker": "N山先輩",
+      "text": "もしかして、二人でデート？いいじゃ〜ん♪",
+      "images": "assets/images/Nyama_park_teasing.png"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "え、えーっと...そういうわけじゃ...",
+      "images": "assets/images/megumi_park_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "デートって言われても...まあ、そんなに嫌な気はしないけど。めぐみちゃんも完全に否定してないし。"
+    },
+    {
+      "type": "message",
+      "speaker": "N山先輩",
+      "text": "鹿ならあの辺にいっぱいはるで〜。せっかくだから見に行ったらどう？",
+      "images": "assets/images/Nyama_park_pointing.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "N山、なぜか奈良公園に詳しいな..."
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "私たち...カップルに見えるんですね！",
+      "images": "assets/images/megumi_park_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "カップルって...心臓がドキドキする。めぐみちゃんもまんざらでもなさそうだし。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(心の声)",
+      "text": "いいリフレッシュになったな。せっかくだし、このままご飯でも食べに行こうかな。"
+    },
+    {
+      "type": "message",
+      "speaker": "主人公(会話)",
+      "text": "めぐみちゃん、お疲れ様！良かったら一緒にご飯食べに行かない？"
+    },
+    {
+      "type": "message",
+      "speaker": "めぐみ",
+      "text": "はい♪ ぜひお願いします！{{playerName}}先輩とお食事なんて、なんだかドキドキしちゃいます。",
+      "images": "assets/images/megumi_park_happy.png"
+    },
+    {
+      "type": "choice",
+      "speaker": "system",
+      "text": "どこでご飯を食べる？",
+      "options": [
+        {
+          "text": "コンビニ飯",
+          "affectionChange": 10,
+          "next": "5A"
+        },
+        {
+          "text": "吉野家",
+          "affectionChange": -5,
+          "next": "5B"
+        },
+        {
+          "text": "居酒屋",
+          "affectionChange": 20,
+          "next": "5C"
+        }
+      ]
+    }
+  ]
+}

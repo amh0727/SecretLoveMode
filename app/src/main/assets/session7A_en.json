@@ -1,0 +1,102 @@
+{
+  "title": "Megumi's Answer",
+  "scenarios": [
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Huh... what did she just say?",
+      "images": "assets/images/megumi_beach_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Wait... does that mean you're saying yes to dating me?"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Yes... Don’t make me say it again!",
+      "images": "assets/images/megumi_beach_shy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Just as an awkward silence followed the successful confession, a loud sound suddenly broke through the air."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "BOOOOOOM!!!",
+      "images": "assets/images/fireworks_night.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Whoa!"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "So there were fireworks today..."
+    ,
+      "images": "assets/images/megumi_beach_amazed.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "I’ll never forget these fireworks today♪",
+      "images": "assets/images/megumi_beach_happy.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Me neither."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "On the beach, with only the sound of waves and fireworks, {{playerName}} gently held Megumi’s hand."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "A few weeks later..."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "Today is the day of the {{travel_destination}} trip Megumi and I had been planning for a while."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "{{playerName}}! Hurry or we’ll miss the train!",
+      "images": "assets/images/megumi_travel_excited.png"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Dialogue)",
+      "text": "Sorry! I’m coming right now!"
+    },
+    {
+      "type": "message",
+      "speaker": "Protagonist (Inner Thoughts)",
+      "text": "Since then, we've been going on trips starting with {{travel_destination}} and many more."
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "And so, yet another souvenir was added to the secretary room of the UbiLab..."
+    },
+    {
+      "type": "message",
+      "speaker": "Megumi",
+      "text": "Here’s some snacks from us, for everyone in the lab! Please enjoy!"
+    },
+    {
+      "type": "message",
+      "speaker": "system",
+      "text": "GAME CLEAR"
+    }
+  ]
+}
